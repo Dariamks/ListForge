@@ -2,12 +2,18 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0a0a0a;
+  /* Nuwa-style warm-red accent. Used VERY sparingly — primary CTA, focus rings. */
+  --accent: #d43436;
+  --accent-hover: #c12829;
+  --accent-fg: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -15,12 +21,31 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #fafafa;
+    --accent: #d43436;
+    --accent-hover: #ae2325;
   }
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(212, 52, 54, 0.18);
+}
+
+/* Single primitive: blinking cursor for streaming preview mockup */
+@keyframes blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.animate-blink { animation: blink 1s step-end infinite; }

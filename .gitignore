@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# private working files (launch playbooks, internal progress notes)
+/launch/
+/progress.md
+
