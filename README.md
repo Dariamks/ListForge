@@ -2,9 +2,15 @@
 
 > Free AI Listing Optimizer for Amazon, TikTok Shop & Shopify.
 
+**Live:** [listforge.dev](https://listforge.dev) · **Prompts (open-source):** [Dariamks/listforge-prompts](https://github.com/Dariamks/listforge-prompts)
+
 A Programmatic-SEO + AI-tool web app. Sellers paste raw product notes, get a
 marketplace-policy-safe title, 5 bullet points, description, backend keywords,
 and SEO/PPC keywords back in seconds.
+
+The production prompts that power every listing are public and MIT-licensed in
+[`Dariamks/listforge-prompts`](https://github.com/Dariamks/listforge-prompts) —
+audit them, fork them, run them yourself.
 
 ## Stack
 
@@ -46,7 +52,8 @@ components/
 lib/
   deepseek.ts                    AI SDK client
   rate-limit.ts                  in-memory IP token bucket
-  listing-prompts.ts             system prompts per platform + mock fallback
+  listing-prompts.ts             system prompts per platform (mirrors
+                                 github.com/Dariamks/listforge-prompts)
   categories.ts                  pSEO category taxonomy
   guides.ts                      slug router for /guides/[slug]
   utils.ts                       cn() + SITE constants
@@ -89,3 +96,15 @@ token bucket — fine for local dev, lossy on Vercel cold starts.
 - Week 2: Programmatic SEO — 36 pSEO landing pages, sitemap, schema.org
 - Week 3: Traffic — Reddit/Twitter/PH launches, BetaList, AlternativeTo, Toolify
 - Week 4: Iterate — funnel optimization, plan Pro tier (Stripe/Creem)
+
+## Related
+
+- [**listforge-prompts**](https://github.com/Dariamks/listforge-prompts) — the
+  exact production system prompts that this app sends to DeepSeek. MIT.
+- [**listforge.dev**](https://listforge.dev) — the live, free, no-signup app.
+- Security disclosure: [`/.well-known/security.txt`](https://listforge.dev/.well-known/security.txt)
+  → `security@listforge.dev`
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
