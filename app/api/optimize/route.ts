@@ -47,7 +47,7 @@ const OutputSchema = z.object({
   bullets: z.array(z.string()).length(5),
   description: z.string(),
   backendKeywords: z.string(),
-  seoKeywords: z.array(z.string()).min(6).max(14),
+  seoKeywords: z.array(z.string()).min(8).max(12),
 });
 
 export async function POST(req: Request) {
