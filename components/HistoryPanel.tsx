@@ -18,22 +18,22 @@ export function HistoryPanel({ items, onSelect, onClear, onRemove }: Props) {
   if (items.length === 0) return null;
 
   return (
-    <section className="mt-10 rounded-xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-950">
+    <section className="mt-10 rounded-2xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-950">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-stone-700 hover:bg-stone-50 dark:text-stone-200 dark:hover:bg-stone-900"
+        className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:text-stone-200 dark:hover:bg-stone-900"
       >
-        <span className="flex items-center gap-2">
-          <HistoryIcon className="h-4 w-4 text-stone-500" />
+        <span className="flex items-center gap-2.5">
+          <HistoryIcon className="h-4 w-4 text-stone-400" />
           Recent generations
-          <span className="rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-600 dark:bg-stone-800 dark:text-stone-400">
+          <span className="rounded-full border border-stone-200 px-2 py-0.5 text-xs font-medium text-stone-500 dark:border-stone-800 dark:text-stone-400">
             {items.length}
           </span>
         </span>
         <ChevronDown
-          className={`h-4 w-4 text-stone-500 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-stone-400 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -51,7 +51,7 @@ export function HistoryPanel({ items, onSelect, onClear, onRemove }: Props) {
                   className="min-w-0 flex-1 text-left"
                 >
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="shrink-0 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-stone-700 dark:bg-stone-950/50 dark:text-stone-300">
+                    <span className="shrink-0 rounded border border-stone-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-stone-600 dark:border-stone-800 dark:text-stone-400">
                       {PLATFORM_LABEL[it.platform]}
                     </span>
                     <span className="truncate text-sm font-medium text-stone-800 dark:text-stone-100">
@@ -78,12 +78,12 @@ export function HistoryPanel({ items, onSelect, onClear, onRemove }: Props) {
             ))}
           </ul>
 
-          <div className="flex flex-col gap-2 border-t border-stone-200 px-4 py-2.5 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between dark:border-stone-800 dark:text-stone-500">
+          <div className="flex flex-col gap-2 border-t border-stone-200 px-5 py-3 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between dark:border-stone-800 dark:text-stone-500">
             <span>Stored locally in this browser only — clears on cache wipe.</span>
             <button
               type="button"
               onClick={onClear}
-              className="inline-flex items-center gap-1 rounded px-2 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-900"
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors hover:bg-stone-50 hover:text-[var(--accent)] dark:hover:bg-stone-900"
             >
               <Trash2 className="h-3.5 w-3.5" />
               Clear all

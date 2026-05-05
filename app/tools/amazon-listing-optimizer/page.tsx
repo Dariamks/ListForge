@@ -10,12 +10,16 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <div className="mb-8 max-w-3xl">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <div className="mb-10 max-w-3xl sm:mb-14">
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+          Amazon
+        </div>
+        <h1 className="mt-3 text-balance text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl dark:text-stone-50">
           Amazon Listing Optimizer
         </h1>
-        <p className="mt-3 text-stone-600 dark:text-stone-400">
+        <p className="mt-4 text-pretty text-lg text-stone-600 dark:text-stone-400">
           Generate a compliant, conversion-friendly Amazon listing — title (≤200
           chars), 5 bullet points (benefit-led), product description, and backend
           keywords (under 250 bytes). No fluff. No fabricated features.
@@ -49,16 +53,21 @@ function FaqSection() {
     },
   ];
   return (
-    <section className="mt-16 max-w-3xl">
-      <h2 className="text-2xl font-bold tracking-tight">FAQ</h2>
-      <dl className="mt-6 space-y-4">
+    <section className="mt-20 max-w-3xl sm:mt-24">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+        FAQ
+      </div>
+      <h2 className="mt-3 text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+        Common questions
+      </h2>
+      <dl className="mt-8 divide-y divide-stone-200 dark:divide-stone-800">
         {faqs.map(({ q, a }) => (
-          <div
-            key={q}
-            className="rounded-xl border border-stone-200 bg-white p-5 dark:border-stone-800 dark:bg-stone-950"
-          >
-            <dt className="font-semibold">{q}</dt>
-            <dd className="mt-1 text-sm text-stone-600 dark:text-stone-400">{a}</dd>
+          <div key={q} className="py-6 first:pt-0">
+            <dt className="text-base font-semibold text-stone-900 dark:text-stone-50">{q}</dt>
+            <dd className="mt-2 text-pretty text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+              {a}
+            </dd>
           </div>
         ))}
       </dl>

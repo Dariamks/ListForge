@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Copy, Loader2, Sparkles, Check } from "lucide-react";
+import { ArrowRight, Copy, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -232,16 +232,17 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
       <div className="grid gap-8 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-stone-600" />
-            Your product
-          </CardTitle>
+          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+            Step 1
+          </div>
+          <CardTitle className="text-2xl">Your product</CardTitle>
           <CardDescription>
             Drop in raw notes — bullet points, half-thoughts, even Chinese / English mixed are fine.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid gap-2">
               <Label htmlFor="productName">Product name *</Label>
               <Input
@@ -269,7 +270,7 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-stone-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-500 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+                  className="flex h-10 w-full appearance-none rounded-lg border border-stone-200 bg-white bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23a8a29e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px_16px] bg-[position:right_0.85rem_center] bg-no-repeat px-3.5 pr-9 text-sm text-stone-900 transition-colors focus-visible:border-stone-900 focus-visible:outline-none dark:border-stone-800 dark:bg-stone-950 dark:text-stone-100 dark:focus-visible:border-stone-100"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c.slug} value={c.slug}>
@@ -314,7 +315,11 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
             </div>
 
             {error && (
-              <p className="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+              <p className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"
+                  aria-hidden
+                />
                 {error}
               </p>
             )}
@@ -323,12 +328,12 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
               {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Streaming 3 variants...
+                  Streaming 3 variants…
                 </>
               ) : (
                 <>
-                  <Sparkles className="h-4 w-4" />
                   Generate 3 variants
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </Button>
@@ -381,10 +386,10 @@ function ResultPanel({
   if (isPending && states.length === 0) {
     return (
       <Card className="grid place-items-center text-center">
-        <CardContent className="py-20">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-stone-600" />
-          <p className="mt-4 text-sm text-stone-600 dark:text-stone-400">
-            Connecting to the model...
+        <CardContent className="py-24">
+          <Loader2 className="mx-auto h-6 w-6 animate-spin text-stone-500" />
+          <p className="mt-4 text-sm text-stone-500 dark:text-stone-500">
+            Connecting to the model…
           </p>
         </CardContent>
       </Card>
@@ -393,10 +398,13 @@ function ResultPanel({
 
   if (states.length === 0) {
     return (
-      <Card className="grid place-items-center bg-stone-50/60 text-center dark:bg-stone-900/40">
-        <CardContent className="py-20">
-          <Sparkles className="mx-auto h-8 w-8 text-stone-400" />
-          <p className="mt-4 text-sm text-stone-500 dark:text-stone-500">
+      <Card className="grid place-items-center text-center">
+        <CardContent className="py-24">
+          <div className="flex items-center justify-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+            Step 2
+          </div>
+          <p className="mt-3 text-sm text-stone-500 dark:text-stone-500">
             Your 3 listing variants will appear here.
           </p>
         </CardContent>
@@ -412,18 +420,19 @@ function ResultPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          Optimized listings
-          {isStreaming && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-stone-50 px-2 py-0.5 text-xs font-medium text-stone-700 dark:bg-stone-950/40 dark:text-stone-300">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              streaming
-            </span>
-          )}
-        </CardTitle>
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-stone-500">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isStreaming ? "animate-pulse bg-[var(--accent)]" : "bg-stone-400"
+            }`}
+            aria-hidden
+          />
+          {isStreaming ? "Streaming" : "Step 2"}
+        </div>
+        <CardTitle className="text-2xl">Optimized listings</CardTitle>
         <CardDescription>
           {isStreaming
-            ? "Watching the model write all 3 variants in parallel..."
+            ? "Watching the model write all 3 variants in parallel…"
             : "3 alternatives — pick the one that fits, then copy."}
         </CardDescription>
       </CardHeader>
@@ -432,7 +441,7 @@ function ResultPanel({
         <div
           role="tablist"
           aria-label="Listing variants"
-          className="flex gap-1 rounded-lg border border-stone-200 bg-stone-50 p-1 dark:border-stone-800 dark:bg-stone-900"
+          className="flex gap-2"
         >
           {states.map((s, i) => {
             const isActive = i === activeIdx;
@@ -444,16 +453,18 @@ function ResultPanel({
                 aria-selected={isActive}
                 type="button"
                 onClick={() => onSelect(i)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
                   isActive
-                    ? "bg-white text-stone-600 shadow-sm dark:bg-stone-950 dark:text-stone-400"
-                    : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
+                    ? "border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900"
+                    : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-400 dark:hover:border-stone-700 dark:hover:text-stone-100"
                 }`}
               >
                 {!s.done && !s.error && (
                   <Loader2 className="h-3 w-3 animate-spin opacity-60" />
                 )}
-                {s.error && <span className="text-red-600">⚠</span>}
+                {s.error && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+                )}
                 {baseLabel}
               </button>
             );
@@ -461,7 +472,11 @@ function ResultPanel({
         </div>
 
         {active.error ? (
-          <p className="rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          <p className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
+            <span
+              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"
+              aria-hidden
+            />
             {active.error}
           </p>
         ) : (
@@ -525,30 +540,34 @@ function Section({
 
   return (
     <div>
-      <div className="mb-1.5 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-500">
           {label}
         </span>
         <button
           type="button"
           onClick={copy}
           disabled={!hasValue}
-          className="inline-flex items-center gap-1 text-xs text-stone-500 hover:text-stone-600 disabled:opacity-30 disabled:hover:text-stone-500"
+          className={`inline-flex items-center gap-1 text-xs font-medium transition-colors disabled:opacity-30 ${
+            copied
+              ? "text-[var(--accent)]"
+              : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
+          }`}
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
       <div
-        className={`min-h-[2.5rem] rounded-md border border-stone-200 bg-stone-50 p-3 text-sm text-stone-800 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-200 ${
+        className={`min-h-[2.5rem] rounded-lg border border-stone-200 bg-white px-3.5 py-2.5 text-sm leading-relaxed text-stone-800 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-200 ${
           multiline ? "whitespace-pre-line" : ""
         }`}
       >
-        {hasValue ? value : <span className="text-stone-400">…</span>}
+        {hasValue ? value : <span className="text-stone-300 dark:text-stone-700">…</span>}
         {streaming && hasValue && (
           <span
             aria-hidden
-            className="ml-0.5 inline-block h-3.5 w-[2px] -mb-0.5 animate-pulse bg-stone-500 align-middle"
+            className="ml-0.5 -mb-0.5 inline-block h-3.5 w-[2px] animate-pulse bg-[var(--accent)] align-middle"
           />
         )}
       </div>
