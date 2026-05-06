@@ -1,0 +1,335 @@
+/**
+ * Hand-written, category-specific SEO content used by pSEO pages
+ * (`/guides/<platform>-<category>-listing-optimizer`) to give each page
+ * ~250 words of unique, indexable content beyond the shared template.
+ *
+ * Kept separate from `categories.ts` so the taxonomy stays focused on
+ * structure and this file can grow independently.
+ *
+ * Convention: every category in `CATEGORIES` (lib/categories.ts) MUST have
+ * a matching entry here, keyed by category slug. The build will fail-soft
+ * if missing — `getCategoryContent` returns null and PseoView omits those
+ * sections — but ship-blocking review should treat missing content as a bug.
+ */
+
+import type { Platform } from "./listing-prompts";
+
+export interface CommonMistake {
+  /** ~6-10 words: the mistake itself */
+  mistake: string;
+  /** ~20-30 words: why it kills conversions or rankings */
+  why: string;
+}
+
+export interface CategoryContent {
+  /** Per-platform "what good looks like" hint (~25 words each) */
+  winningTitleHints: Record<Platform, string>;
+  /** 3 category-specific listing mistakes with reasoning */
+  commonMistakes: CommonMistake[];
+}
+
+export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
+  "kitchen-gadgets": {
+    winningTitleHints: {
+      amazon:
+        "Lead with material grade ('304 stainless', 'BPA-free silicone'), pair the action verb buyers actually search ('press', 'mince', 'peel'), and close the first 75 chars with a cleaning-claim hook.",
+      "tiktok-shop":
+        "Open with the meal-prep frustration solved ('Skip pre-peeling forever'), then the gadget type, then the one cleaning-time fact that earns the click.",
+      shopify:
+        "Brand name first, then the gadget category, then a sensory adjective ('heirloom', 'pro-grade'). Reserve specs for the bullets — DTC titles trade specs for tone.",
+    },
+    commonMistakes: [
+      {
+        mistake: "Vague material claims like 'premium quality steel'",
+        why: "Buyers parse 'premium' as filler. '304 food-grade stainless' or '18/10 chrome' is what gets clicks — the grade IS the trust signal.",
+      },
+      {
+        mistake: "Repeating the brand name in every bullet",
+        why: "Wastes 5–8 chars per bullet that should be carrying a benefit. The title and Brand field already cover attribution.",
+      },
+      {
+        mistake: "Listing dishwasher-safe in bullet 5",
+        why: "It's a top-3 buyer concern for kitchen tools — bury it and you lose the comparison shop. Move it to bullet 1 or the title.",
+      },
+    ],
+  },
+
+  "home-fitness": {
+    winningTitleHints: {
+      amazon:
+        "Quantify resistance, weight, or capacity in the title ('5–150 lb', '6mm thick'), then the product type, then who it's for. Numbers beat adjectives every time.",
+      "tiktok-shop":
+        "Lead with the workout outcome ('Hit your back without a gym'), then the band/mat/rope spec. Demo-ability is the unlock.",
+      shopify:
+        "Open with the discipline (Pilates, calisthenics, mobility), then the equipment type. Buyers shop by training method on DTC, not by category.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Professional grade' without a credential",
+        why: "Means nothing without certification or pro endorsement. Sub for a measurable spec — 'Olympic-rated' or 'NSCA-cert backed' — to keep the claim alive.",
+      },
+      {
+        mistake: "Hiding the resistance level inside an image",
+        why: "Search engines and screen readers can't read it. Put '10/20/30/40/50 lb' as text in the title or first bullet so it ranks.",
+      },
+      {
+        mistake: "Bundling beginner and advanced into one listing",
+        why: "Returns spike when a beginner buys an advanced kit. Run separate SKUs with separate listings — search intent is fundamentally different.",
+      },
+    ],
+  },
+
+  "pet-supplies": {
+    winningTitleHints: {
+      amazon:
+        "Pet size or breed range first ('Large 50-90 lb'), then product type, then the category-specific safety claim ('non-toxic', 'no-spill', 'crate-safe').",
+      "tiktok-shop":
+        "Lead with the pet-parent worry ('Stop the 3am gas'), then the product. Pet-parent emotion drives scroll-stop in this category.",
+      shopify:
+        "Brand-driven titles work ('Olive's by ListForge'), then the product, then the lifestyle cue (small-apartment, multi-pet, senior-friendly).",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Indestructible' chew toy claims",
+        why: "Amazon will require evidence and reviews will refute it. Use 'tough chewer rated' or 'reinforced for power chewers' — calibrated language stays compliant.",
+      },
+      {
+        mistake: "One listing for all dog sizes",
+        why: "Returns from buyers whose dog can't use the size. Split S/M/L into separate SKUs and let each title commit to one size only.",
+      },
+      {
+        mistake: "Forgetting breed-specific keywords",
+        why: "'For German Shepherds' or 'small-breed senior' captures real long-tail searches. Generic 'for dogs' competes with everyone and wins nothing.",
+      },
+    ],
+  },
+
+  "skincare-beauty": {
+    winningTitleHints: {
+      amazon:
+        "Hero ingredient + percentage first ('20% Vitamin C'), product type, then the secondary actives. Concentration is the buyer filter — not the brand.",
+      "tiktok-shop":
+        "Lead with the skin concern ('Fade dark spots in 4 weeks'), then product type. Result-first wins on TikTok Shop every time.",
+      shopify:
+        "Brand-led, then the routine slot ('Morning Brightening Serum'). Skincare on DTC sells the regimen, not the spec sheet.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Anti-aging' claim without a stated active",
+        why: "Drug-claim risk on Amazon and counter-productive on Shopify. Reframe as 'with retinol 0.3%' or 'helps reduce visible fine lines' — descriptive, not therapeutic.",
+      },
+      {
+        mistake: "Skipping pH and stabilizer info",
+        why: "Vitamin C and AHA buyers actively search 'pH 3.5'. Without it you lose the educated buyer to a competitor who states it.",
+      },
+      {
+        mistake: "Marketing words in place of INCI",
+        why: "Buyers cross-reference INCI on Reddit before purchase. Hide the ingredient list and you hide the trust — full INCI in bullet 5 wins more than ad copy.",
+      },
+    ],
+  },
+
+  "baby-products": {
+    winningTitleHints: {
+      amazon:
+        "Specific safety/age cue first ('0–3 months', 'Slow Flow'), product type, then certifications ('BPA-free', 'JPMA-certified', 'GOTS-organic').",
+      "tiktok-shop":
+        "Lead with the parenting moment ('No more 2am screaming'), then product. Parents search by problem, not feature, on TikTok.",
+      shopify:
+        "Brand storytelling: who designed it (mother, pediatrician, NICU nurse). On DTC the trust currency is a person, not a spec.",
+    },
+    commonMistakes: [
+      {
+        mistake: "Adjective-heavy safety claims",
+        why: "'Super safe' has no meaning. Cite the standard: 'ASTM F963', 'CPSC compliant', 'GOTS-certified organic'. Specific equals trustworthy.",
+      },
+      {
+        mistake: "Bundling age ranges into one SKU",
+        why: "0–3m and 6m+ are different products with different fits. One listing with size variants always underperforms two age-specific listings.",
+      },
+      {
+        mistake: "Missing dishwasher / sterilizer compatibility",
+        why: "It's the #2 question on every baby-bottle review. Put it in the title or bullet 1, not bullet 5 — convenience is the conversion driver.",
+      },
+    ],
+  },
+
+  "outdoor-camping": {
+    winningTitleHints: {
+      amazon:
+        "Use case + key spec first ('4-Season 2-Person 4.5 lb'), product type, then the differentiator. Backpacker buyers filter by weight before brand.",
+      "tiktok-shop":
+        "Lead with the trip type ('Solo PCT thru-hike kit'), then product. Outdoor TikTok runs on lifestyle aesthetics — show the destination first.",
+      shopify:
+        "Brand-as-credibility ('Trusted by NOLS instructors'), product, then use season. Outdoor DTC sells the expedition story behind the gear.",
+    },
+    commonMistakes: [
+      {
+        mistake: "Generic 'lightweight' without a number",
+        why: "Backpackers compare to the gram. '4.5 lb total weight' beats 'lightweight design' every time — the number is the entire reason they're searching.",
+      },
+      {
+        mistake: "Hiding the season rating",
+        why: "3-season vs 4-season is a fundamentally different product. Put the rating in the title — buyers filter by season before anything else.",
+      },
+      {
+        mistake: "Mixing waterproof and water-resistant",
+        why: "Different specs (1500mm vs 5000mm hydrostatic head). Be specific: 'rated to 3000mm' is the trust phrase casual specs can't earn.",
+      },
+    ],
+  },
+
+  "office-stationery": {
+    winningTitleHints: {
+      amazon:
+        "Tip size first ('0.5mm Needle Tip'), product type, count ('24 Pack'). In office supplies, specs are non-negotiable for the title.",
+      "tiktok-shop":
+        "Lead with the aesthetic mood ('That clean-girl notebook setup'), then the product. Stationery TikTok is aesthetic-led discovery.",
+      shopify:
+        "Brand-led, then product category, then the workflow ('Bullet Journal Starter Kit'). DTC stationery sells the system, not the SKU.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Smooth ink' without a tip-size pairing",
+        why: "0.38 needle vs 0.7 bullet behave totally differently. State both: 'smooth-flow 0.5mm needle' is what searches need to convert.",
+      },
+      {
+        mistake: "Selling left- and right-handed in one SKU",
+        why: "Smudge complaints crash the listing's review average. Split it, or call out 'left-handed friendly with quick-dry ink' upfront.",
+      },
+      {
+        mistake: "Pack count buried in the image",
+        why: "Buyers price-compare per-unit. '12-Count' or '24-Count' must be in the title — without it buyers default to a competitor with clearer pricing math.",
+      },
+    ],
+  },
+
+  "fashion-accessories": {
+    winningTitleHints: {
+      amazon:
+        "Material grade first ('Full-Grain Leather', '100% Mulberry Silk'), product type, then size/fit. Fakes prowl this category — credibility specs win.",
+      "tiktok-shop":
+        "Lead with the styling cue ('Coastal grandma summer accessory'), then the product. Mood drives discovery — not specs.",
+      shopify:
+        "Brand-first, then product, then the construction detail ('Hand-burnished Italian leather'). DTC accessories sell craft and provenance.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Genuine leather' without grade",
+        why: "'Genuine leather' is the lowest grade — bonded scraps. Educated buyers know. 'Top-grain' or 'full-grain' is what wins the trust read.",
+      },
+      {
+        mistake: "Hiding the width or length",
+        why: "Belt buyers search '1.25 inch'. Necklace buyers search '18 inch chain'. Numbers in title — or you lose the long-tail traffic entirely.",
+      },
+      {
+        mistake: "Generic 'fits all' sizing",
+        why: "Triggers returns. Specify the range ('Waist 30-44', 'Wrist 6-8 inch') in the bullet — buyers filter by fit before they filter by style.",
+      },
+    ],
+  },
+
+  "phone-accessories": {
+    winningTitleHints: {
+      amazon:
+        "Exact device model in the first 60 chars ('iPhone 16 Pro Max'), product type, then the standout spec ('MagSafe', '15W'). Compatibility IS the entire game here.",
+      "tiktok-shop":
+        "Lead with the hero use case ('That magnetic ring stand life'), then the spec. Show, don't tell — TikTok proves accessories with demos.",
+      shopify:
+        "Brand-first, then category, then the design language ('minimalist matte', 'rugged tactical'). DTC phone gear sells aesthetic plus drop spec.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Fits iPhone 16 series'",
+        why: "Series-wide claims fail half the buyers — Plus and Pro Max have different cutouts. One SKU per device, model name in the title.",
+      },
+      {
+        mistake: "MagSafe-compatible vs MagSafe-certified ambiguity",
+        why: "Compatible = magnets aligned. Certified = passed Apple's tests. Be honest about which you are — the savvy buyer filters by the latter.",
+      },
+      {
+        mistake: "Listing a drop rating without the standard",
+        why: "'Drop tested' means nothing. 'MIL-STD-810G drop tested 12 ft on concrete' — the standard backs the claim and the height makes it tangible.",
+      },
+    ],
+  },
+
+  "smart-home": {
+    winningTitleHints: {
+      amazon:
+        "Protocol first ('Matter', 'Zigbee', 'Wi-Fi 2.4GHz'), product type, then the integration list. Buyers filter by ecosystem before brand.",
+      "tiktok-shop":
+        "Lead with the routine ('Wake up to dimmable lights'), then product. Smart-home TikTok is about solving daily friction.",
+      shopify:
+        "Brand-first, then product, then the ecosystem alignment ('Apple Home native', 'Home Assistant ready'). DTC sells the philosophy.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Works with Alexa, Google, Apple' as a single string",
+        why: "Apple Home is the gatekeeper for many buyers. Spell it out: 'works with Apple Home, Alexa, Google Home, SmartThings' — the explicit list builds trust.",
+      },
+      {
+        mistake: "Hiding the 2.4GHz Wi-Fi requirement",
+        why: "Buyers with 5GHz-only routers will return the product. Lead with '2.4GHz Wi-Fi only — most home routers' so they self-qualify before purchase.",
+      },
+      {
+        mistake: "No-hub or hub-required ambiguity",
+        why: "Buyers expecting plug-and-play return when they need to buy a $100 hub. Surface 'No Hub Required' or 'Requires Matter Hub' in the title.",
+      },
+    ],
+  },
+
+  jewelry: {
+    winningTitleHints: {
+      amazon:
+        "Material specifics first ('Sterling Silver 925', '14k Gold-Filled'), product type, then stone or finish. Hypoallergenic-conscious buyers search precisely.",
+      "tiktok-shop":
+        "Lead with the occasion ('Anniversary surprise idea'), then product. Jewelry on TikTok is overwhelmingly gift-driven discovery.",
+      shopify:
+        "Brand storytelling ('Made in our Toronto studio'), then product, then the ethics cue ('lab-grown', 'recycled gold'). DTC jewelry sells provenance.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Hypoallergenic' without a material backing",
+        why: "Plated brass is hypoallergenic until the plating wears off. Spec the base ('solid sterling 925', 'titanium ASTM F899') so the claim survives long-term.",
+      },
+      {
+        mistake: "Skipping chain length",
+        why: "Necklaces live or die on length — 16/18/20/24 inch fit different necklines. Put it in the title; size-chart images alone get scrolled past.",
+      },
+      {
+        mistake: "Vague 'gift box included'",
+        why: "Photos exist for a reason. Show the box or describe it ('velvet pouch + magnetic-closure box') — gift-buyers compare unboxing experience.",
+      },
+    ],
+  },
+
+  "home-decor": {
+    winningTitleHints: {
+      amazon:
+        "Product type first, then dimensions ('18×18'), then construction or material. Fit anxiety is the conversion blocker — answer it in the title.",
+      "tiktok-shop":
+        "Lead with the style era ('Coastal grandma', 'Japandi'), then the piece. Aesthetic-led discovery is the entire funnel here.",
+      shopify:
+        "Brand-led, then product, then the room cue ('living room', 'reading nook'). Home decor on DTC sells the room — not the item.",
+    },
+    commonMistakes: [
+      {
+        mistake: "'Cover only' buried in bullet 4",
+        why: "Top return reason in this category. Put it in the title parenthetical — '(Cover Only, No Insert)' — and slash returns by 30%.",
+      },
+      {
+        mistake: "Generic 'modern decor' style label",
+        why: "Style is search intent. 'Boho', 'mid-century', 'Japandi' each have dedicated buyer pools — pick one and own it in the title.",
+      },
+      {
+        mistake: "Skipping wash care for textiles",
+        why: "Buyers assume non-washable and default to a competitor who specifies. State 'machine washable cold' as a benefit — not a footnote in fine print.",
+      },
+    ],
+  },
+};
+
+export function getCategoryContent(slug: string): CategoryContent | null {
+  return CATEGORY_CONTENT[slug] ?? null;
+}
