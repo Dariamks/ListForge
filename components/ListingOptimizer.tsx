@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { ArrowRight, Copy, Loader2, Check } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { ArrowRight, Check, Copy, Columns3, Loader2, Mail, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CATEGORIES } from "@/lib/categories";
-import type { OptimizedListing, Platform } from "@/lib/listing-prompts";
+import type { OptimizedListing, Platform, VariantStyle } from "@/lib/listing-prompts";
 import {
   type HistoryItem,
   appendHistory,
@@ -18,6 +18,7 @@ import {
 } from "@/lib/history";
 import { readNdjson } from "@/lib/stream-client";
 import { HistoryPanel } from "@/components/HistoryPanel";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 /** Partial listing during streaming — every field is optional until the chunk for it arrives. */
 type PartialListing = Partial<OptimizedListing>;
@@ -37,6 +38,21 @@ type StreamLine =
   | { idx: number; error: string };
 
 const EMPTY_VARIANT: VariantState = { partial: {}, done: false, error: null };
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+const MARKET_OPTIONS = [
+  { value: "United States", label: "United States" },
+  { value: "United Kingdom", label: "United Kingdom" },
+  { value: "Australia", label: "Australia / New Zealand" },
+  { value: "Canada", label: "Canada" },
+  { value: "Germany", label: "Germany" },
+  { value: "France", label: "France" },
+  { value: "Japan", label: "Japan" },
+  { value: "Other (US default)", label: "Other (US default)" },
+] as const;
+
+const FORM_DRAFT_VERSION = 1;
+const VARIANT_STYLES: VariantStyle[] = ["conservative", "balanced", "creative"];
 
 function isCompleteListing(p: PartialListing): p is OptimizedListing {
   return (
@@ -49,18 +65,41 @@ function isCompleteListing(p: PartialListing): p is OptimizedListing {
   );
 }
 
+function formatFullListing(listing: PartialListing): string {
+  const lines = [
+    `TITLE: ${listing.title ?? ""}`,
+    "",
+    "BULLETS:",
+    ...(Array.isArray(listing.bullets)
+      ? listing.bullets.map((bullet, index) => `${index + 1}. ${bullet}`)
+      : []),
+    "",
+    `DESCRIPTION: ${listing.description ?? ""}`,
+    "",
+    `BACKEND KEYWORDS: ${listing.backendKeywords ?? ""}`,
+  ];
+  return lines.join("\n").trim();
+}
+
 interface Props {
   platform: Platform;
   defaultCategory?: string;
 }
 
 export function ListingOptimizer({ platform, defaultCategory }: Props) {
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const defaultCategoryValue = defaultCategory ?? CATEGORIES[0].slug;
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState(defaultCategory ?? CATEGORIES[0].slug);
+  const [category, setCategory] = useState(defaultCategoryValue);
+  const [customCategory, setCustomCategory] = useState("");
   const [features, setFeatures] = useState("");
   const [keywords, setKeywords] = useState("");
   const [targetMarket, setTargetMarket] = useState("United States");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetSignal, setTurnstileResetSignal] = useState(0);
+  const [waitlistEmail, setWaitlistEmail] = useState("");
+  const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
 
   const [streamStates, setStreamStates] = useState<VariantState[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -82,6 +121,61 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
     isPending && streamStates.length > 0 && streamStates.some((s) => !s.done && !s.error);
 
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const draftKey = `listforge:v${FORM_DRAFT_VERSION}:form:${platform}`;
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as Partial<{
+        productName: string;
+        brand: string;
+        category: string;
+        customCategory: string;
+        features: string;
+        keywords: string;
+        targetMarket: string;
+      }>;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setProductName(draft.productName ?? "");
+      setBrand(draft.brand ?? "");
+      setCategory(draft.category ?? defaultCategoryValue);
+      setCustomCategory(draft.customCategory ?? "");
+      setFeatures(draft.features ?? "");
+      setKeywords(draft.keywords ?? "");
+      setTargetMarket(draft.targetMarket ?? "United States");
+    } catch {}
+  }, [defaultCategoryValue, draftKey]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(
+          draftKey,
+          JSON.stringify({
+            productName,
+            brand,
+            category,
+            customCategory,
+            features,
+            keywords,
+            targetMarket,
+          })
+        );
+      } catch {}
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [
+    brand,
+    category,
+    customCategory,
+    draftKey,
+    features,
+    keywords,
+    productName,
+    targetMarket,
+  ]);
+
   // Hydrate history from localStorage after mount. Cannot read on server
   // (no window) and cannot use lazy initial state without causing a
   // hydration mismatch — useEffect is the canonical pattern here.
@@ -114,6 +208,42 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
     setHistory(next);
   }
 
+  const handleTurnstileToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const categoryLabel = useMemo(() => {
+    if (category === "custom") return customCategory.trim();
+    const cat = CATEGORIES.find((c) => c.slug === category);
+    return cat?.label ?? category;
+  }, [category, customCategory]);
+
+  function buildPayload(variants: 1 | 3, variantStyle?: VariantStyle) {
+    return {
+      platform,
+      productName: productName.trim(),
+      category: categoryLabel,
+      brand: brand.trim() || undefined,
+      features: features.trim(),
+      keywords: keywords.trim() || undefined,
+      targetMarket:
+        targetMarket === "Other (US default)" ? "United States" : targetMarket,
+      variants,
+      variantStyle,
+      turnstileToken: turnstileToken || undefined,
+    };
+  }
+
+  function validatePayload(payload: ReturnType<typeof buildPayload>) {
+    if (!payload.productName || !payload.category || !payload.features) {
+      return "Product name, category, and feature notes are required.";
+    }
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      return "Please complete the bot check before generating.";
+    }
+    return null;
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     // Abort any in-flight stream before starting a new one, otherwise
@@ -135,20 +265,10 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
       });
     }
 
-    const cat = CATEGORIES.find((c) => c.slug === category);
-    const payload = {
-      platform,
-      productName: productName.trim(),
-      category: cat?.label ?? category,
-      brand: brand.trim() || undefined,
-      features: features.trim(),
-      keywords: keywords.trim() || undefined,
-      targetMarket: targetMarket.trim() || undefined,
-      variants: 3 as const,
-    };
-
-    if (!payload.productName || !payload.features) {
-      setError("Product name and feature notes are required.");
+    const payload = buildPayload(3);
+    const validationError = validatePayload(payload);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -217,14 +337,106 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
           const next = appendHistory(item).filter((it) => it.platform === platform);
           setHistory(next);
         }
+        setTurnstileResetSignal((n) => n + 1);
       } catch (err) {
         // Abort is expected (user submitted again or navigated) — don't show
         // it as an error.
         if (err instanceof DOMException && err.name === "AbortError") return;
         if (ctrl.signal.aborted) return;
         setError(err instanceof Error ? err.message : "Unknown error");
+        setTurnstileResetSignal((n) => n + 1);
       }
     });
+  }
+
+  async function handleRegenerateVariant(idx: number) {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    const payload = buildPayload(1, VARIANT_STYLES[idx] ?? "balanced");
+    const validationError = validatePayload(payload);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
+    setStreamStates((prev) =>
+      prev.map((state, i) =>
+        i === idx ? { partial: {}, done: false, error: null } : state
+      )
+    );
+
+    startTransition(async () => {
+      try {
+        const res = await fetch("/api/optimize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: ctrl.signal,
+        });
+        if (!res.ok || !res.body) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data?.error ?? `Request failed (${res.status})`);
+        }
+
+        let regenerated: PartialListing = {};
+        for await (const line of readNdjson<StreamLine>(res.body)) {
+          if (!("idx" in line)) continue;
+          if ("error" in line) {
+            setStreamStates((prev) =>
+              prev.map((state, i) =>
+                i === idx ? { ...state, error: line.error, done: true } : state
+              )
+            );
+          } else if ("done" in line) {
+            setStreamStates((prev) =>
+              prev.map((state, i) =>
+                i === idx ? { ...state, done: true } : state
+              )
+            );
+          } else if ("partial" in line) {
+            regenerated = line.partial;
+            setStreamStates((prev) =>
+              prev.map((state, i) =>
+                i === idx ? { ...state, partial: regenerated } : state
+              )
+            );
+          }
+        }
+        setTurnstileResetSignal((n) => n + 1);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        if (ctrl.signal.aborted) return;
+        setError(err instanceof Error ? err.message : "Unknown error");
+        setTurnstileResetSignal((n) => n + 1);
+      }
+    });
+  }
+
+  async function handleWaitlistSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!waitlistEmail.trim()) return;
+    setWaitlistStatus("submitting");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: waitlistEmail.trim(),
+          platform,
+          productName: productName.trim() || undefined,
+          turnstileToken: turnstileToken || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error("Waitlist request failed");
+      setWaitlistStatus("done");
+      setWaitlistEmail("");
+      setTurnstileResetSignal((n) => n + 1);
+    } catch {
+      setWaitlistStatus("error");
+      setTurnstileResetSignal((n) => n + 1);
+    }
   }
 
   return (
@@ -242,7 +454,7 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
             <div className="grid gap-2">
               <Label htmlFor="productName">Product name *</Label>
               <Input
@@ -277,9 +489,23 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
                       {c.label}
                     </option>
                   ))}
+                  <option value="custom">Custom category…</option>
                 </select>
               </div>
             </div>
+
+            {category === "custom" && (
+              <div className="grid gap-2">
+                <Label htmlFor="customCategory">Custom category *</Label>
+                <Input
+                  id="customCategory"
+                  placeholder="e.g. Power tools, toys, electronics"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  required
+                />
+              </div>
+            )}
 
             <div className="grid gap-2">
               <Label htmlFor="features">Features / notes *</Label>
@@ -305,23 +531,72 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="market">Target market</Label>
-                <Input
+                <select
                   id="market"
-                  placeholder="United States"
                   value={targetMarket}
                   onChange={(e) => setTargetMarket(e.target.value)}
-                />
+                  className="flex h-10 w-full appearance-none rounded-lg border border-stone-200 bg-white bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23a8a29e%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px_16px] bg-[position:right_0.85rem_center] bg-no-repeat px-3.5 pr-9 text-sm text-stone-900 transition-colors focus-visible:border-stone-900 focus-visible:outline-none dark:border-stone-800 dark:bg-stone-950 dark:text-stone-100 dark:focus-visible:border-stone-100"
+                >
+                  {MARKET_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
+            <TurnstileWidget
+              siteKey={TURNSTILE_SITE_KEY}
+              action="optimize"
+              resetSignal={turnstileResetSignal}
+              onToken={handleTurnstileToken}
+            />
+
             {error && (
-              <p className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
-                <span
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"
-                  aria-hidden
-                />
-                {error}
-              </p>
+              <div className="space-y-3 rounded-lg border border-stone-200 bg-stone-50 p-3 dark:border-stone-800 dark:bg-stone-900/40">
+                <p className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
+                  <span
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"
+                    aria-hidden
+                  />
+                  {error}
+                </p>
+                {error.toLowerCase().includes("limit") && (
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      type="email"
+                      placeholder="Email me when it refreshes"
+                      value={waitlistEmail}
+                      onChange={(e) => {
+                        setWaitlistEmail(e.target.value);
+                        setWaitlistStatus("idle");
+                      }}
+                      aria-label="Email for quota refresh reminder"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleWaitlistSubmit()}
+                      disabled={waitlistStatus === "submitting"}
+                      className="shrink-0"
+                    >
+                      {waitlistStatus === "submitting" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Mail className="h-4 w-4" />
+                      )}
+                      Remind me
+                    </Button>
+                  </div>
+                )}
+                {waitlistStatus === "done" && (
+                  <p className="text-xs text-stone-500">Saved. We will send a quota refresh reminder.</p>
+                )}
+                {waitlistStatus === "error" && (
+                  <p className="text-xs text-stone-500">Could not save that email. Please try again.</p>
+                )}
+              </div>
             )}
 
             <Button type="submit" size="lg" className="w-full" disabled={isPending}>
@@ -352,6 +627,7 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
           onSelect={setActiveIdx}
           isPending={isPending}
           isStreaming={isStreaming}
+          onRegenerate={handleRegenerateVariant}
         />
       </div>
       </div>
@@ -374,13 +650,18 @@ function ResultPanel({
   onSelect,
   isPending,
   isStreaming,
+  onRegenerate,
 }: {
   states: VariantState[];
   activeIdx: number;
   onSelect: (idx: number) => void;
   isPending: boolean;
   isStreaming: boolean;
+  onRegenerate: (idx: number) => void;
 }) {
+  const [viewMode, setViewMode] = useState<"single" | "compare">("single");
+  const [copiedFull, setCopiedFull] = useState(false);
+
   // Initial pending state before the first NDJSON line lands ("meta" arrives
   // immediately, but if the network is slow the user sees this for ~500ms).
   if (isPending && states.length === 0) {
@@ -416,6 +697,16 @@ function ResultPanel({
   const partial = active.partial;
   const bullets = Array.isArray(partial.bullets) ? partial.bullets : [];
   const seoKeywords = Array.isArray(partial.seoKeywords) ? partial.seoKeywords : [];
+  const canCopyFull = Boolean(partial.title || bullets.length || partial.description);
+
+  async function copyFullListing() {
+    if (!canCopyFull) return;
+    try {
+      await navigator.clipboard.writeText(formatFullListing(partial));
+      setCopiedFull(true);
+      setTimeout(() => setCopiedFull(false), 1500);
+    } catch {}
+  }
 
   return (
     <Card>
@@ -437,41 +728,129 @@ function ResultPanel({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        {/* Variant tabs */}
-        <div
-          role="tablist"
-          aria-label="Listing variants"
-          className="flex gap-2"
-        >
-          {states.map((s, i) => {
-            const isActive = i === activeIdx;
-            const baseLabel = VARIANT_LABELS[i] ?? `Variant ${i + 1}`;
-            return (
+        <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
+          <div
+            role="tablist"
+            aria-label="Result view"
+            className="grid grid-cols-2 rounded-lg border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-stone-900"
+          >
+            {[
+              { value: "single", label: "Single" },
+              { value: "compare", label: "Compare all" },
+            ].map((option) => (
               <button
-                key={i}
-                role="tab"
-                aria-selected={isActive}
+                key={option.value}
                 type="button"
-                onClick={() => onSelect(i)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
-                  isActive
-                    ? "border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900"
-                    : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-400 dark:hover:border-stone-700 dark:hover:text-stone-100"
+                role="tab"
+                aria-selected={viewMode === option.value}
+                onClick={() => setViewMode(option.value as "single" | "compare")}
+                className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-medium transition-colors ${
+                  viewMode === option.value
+                    ? "bg-white text-stone-900 shadow-sm dark:bg-stone-950 dark:text-stone-100"
+                    : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-100"
                 }`}
               >
-                {!s.done && !s.error && (
-                  <Loader2 className="h-3 w-3 animate-spin opacity-60" />
-                )}
-                {s.error && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
-                )}
-                {baseLabel}
+                {option.value === "compare" && <Columns3 className="h-3.5 w-3.5" />}
+                {option.label}
               </button>
-            );
-          })}
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={copyFullListing}
+              disabled={!canCopyFull}
+            >
+              {copiedFull ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copiedFull ? "Copied" : "Copy full listing"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onRegenerate(activeIdx)}
+              disabled={isStreaming}
+              title="Regenerate this variant"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {active.error ? (
+        {/* Variant tabs */}
+        {viewMode === "single" && (
+          <div
+            role="tablist"
+            aria-label="Listing variants"
+            className="flex gap-2"
+          >
+            {states.map((s, i) => {
+              const isActive = i === activeIdx;
+              const baseLabel = VARIANT_LABELS[i] ?? `Variant ${i + 1}`;
+              return (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={isActive}
+                  type="button"
+                  onClick={() => onSelect(i)}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                    isActive
+                      ? "border-stone-900 bg-stone-900 text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900"
+                      : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-400 dark:hover:border-stone-700 dark:hover:text-stone-100"
+                  }`}
+                >
+                  {!s.done && !s.error && (
+                    <Loader2 className="h-3 w-3 animate-spin opacity-60" />
+                  )}
+                  {s.error && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+                  )}
+                  {baseLabel}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {viewMode === "compare" ? (
+          <div className="grid gap-3 lg:grid-cols-3">
+            {states.map((state, index) => {
+              const listing = state.partial;
+              return (
+                <div
+                  key={index}
+                  className="rounded-lg border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-950"
+                >
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium uppercase tracking-wider text-stone-500">
+                      {VARIANT_LABELS[index] ?? `Variant ${index + 1}`}
+                    </span>
+                    {!state.done && !state.error && (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-stone-400" />
+                    )}
+                  </div>
+                  {state.error ? (
+                    <p className="text-sm text-stone-500">{state.error}</p>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium leading-relaxed text-stone-900 dark:text-stone-100">
+                        {listing.title || "…"}
+                      </p>
+                      <ol className="space-y-1.5 text-xs leading-relaxed text-stone-600 dark:text-stone-400">
+                        {(listing.bullets ?? []).slice(0, 5).map((bullet, i) => (
+                          <li key={i}>{i + 1}. {bullet}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : active.error ? (
           <p className="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-300">
             <span
               className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]"

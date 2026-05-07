@@ -69,11 +69,21 @@ export default function AboutPage() {
           your next product into the tool — that&rsquo;s the whole idea.
         </p>
         <p>
-          Building this as a solo indie project means a few things stay
-          small on purpose: no venture funding, no sales team, no aggressive
-          retargeting emails. The trade-off is that I can keep the tool
-          genuinely free for the long tail of sellers who just need a clean
-          listing draft and don&rsquo;t want to commit to another SaaS bill.
+          The founder story is deliberately ordinary: I kept meeting small
+          sellers who were good at sourcing, packaging, and customer support,
+          but still lost hours rewriting the same title and bullet formulas
+          for every marketplace. The expensive tools were built for operators
+          with bigger catalogs. The free advice was scattered across threads,
+          screenshots, and stale templates. So I built a focused tool that does
+          one job well: turn honest product facts into a cleaner first draft.
+        </p>
+        <p>
+          Building this as a solo indie project means a few things stay small
+          on purpose: no venture funding, no sales team, and no signup wall
+          before the first generation. The trade-off is that I can keep the
+          core workflow genuinely free for the long tail of sellers who need a
+          clean listing draft before they are ready to commit to another SaaS
+          bill.
         </p>
 
         <h2 className="mt-10 text-xl font-semibold text-stone-900 dark:text-white">

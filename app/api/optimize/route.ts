@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { streamObject } from "ai";
 import { z } from "zod";
-import { deepseek, DEEPSEEK_MODEL, isAiConfigured } from "@/lib/deepseek";
+import { getListingModels, isAiConfigured } from "@/lib/deepseek";
+import { logApiError } from "@/lib/error-monitor";
+import {
+  buildListingCacheKey,
+  getCachedListings,
+  setCachedListings,
+} from "@/lib/listing-cache";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import {
   buildSystemPrompt,
   buildUserPrompt,
@@ -26,6 +33,8 @@ const InputSchema = z.object({
   keywords: z.string().max(400).optional(),
   targetMarket: z.string().max(80).optional(),
   brand: z.string().max(80).optional(),
+  turnstileToken: z.string().max(2048).optional(),
+  variantStyle: z.enum(["conservative", "balanced", "creative"]).optional(),
   /** Number of alternative listings to generate (1 or 3). Defaults to 3. */
   variants: z.union([z.literal(1), z.literal(3)]).optional().default(3),
 });
@@ -75,12 +84,27 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  const { variants: variantCount, ...rest } = parsed.data;
+  const {
+    variants: variantCount,
+    turnstileToken,
+    variantStyle,
+    ...rest
+  } = parsed.data;
   const input = rest as OptimizeInput;
 
   if (!PLATFORMS.includes(input.platform)) {
     return NextResponse.json({ error: "Unsupported platform" }, { status: 400 });
   }
+
+  const turnstile = await verifyTurnstileToken(turnstileToken, ip, "optimize");
+  if (!turnstile.success) {
+    return NextResponse.json(
+      { error: "Bot verification failed. Please refresh and try again." },
+      { status: 403 }
+    );
+  }
+  const cacheKey = buildListingCacheKey(input, variantCount, variantStyle);
+  const cached = await getCachedListings(cacheKey);
 
   // 3) Build NDJSON stream that multiplexes N parallel variant generations.
   //    Each line is one of:
@@ -92,20 +116,42 @@ export async function POST(req: Request) {
   const writeLine = (
     controller: ReadableStreamDefaultController<Uint8Array>,
     obj: unknown
-  ) => controller.enqueue(enc.encode(JSON.stringify(obj) + "\n"));
+  ) => {
+    try {
+      controller.enqueue(enc.encode(JSON.stringify(obj) + "\n"));
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       writeLine(controller, { meta: { platform: input.platform, count: variantCount } });
 
+      if (cached?.length === variantCount) {
+        cached.forEach((listing, idx) => {
+          writeLine(controller, { idx, partial: listing });
+          writeLine(controller, { idx, done: true });
+        });
+        controller.close();
+        return;
+      }
+
       // Mock mode (no DEEPSEEK_API_KEY) — emit a fake-streamed mock per variant
       // so dev UX exercises the streaming UI even without credentials.
       if (!isAiConfigured()) {
+        const mocks: OptimizedListing[] = [];
         await Promise.all(
           Array.from({ length: variantCount }, (_, idx) =>
-            simulateMockStream(controller, writeLine, idx, buildMockListing(input))
+            {
+              const mock = buildMockListing(input);
+              mocks[idx] = mock;
+              return simulateMockStream(controller, writeLine, idx, mock);
+            }
           )
         );
+        await setCachedListings(cacheKey, mocks);
         controller.close();
         return;
       }
@@ -114,28 +160,56 @@ export async function POST(req: Request) {
       // prompt's variant-style block changes. We build per-variant systems
       // below so each call gets a different angle.
       const prompt = buildUserPrompt(input);
+      const models = getListingModels();
+      const completed: Array<OptimizedListing | null> = Array.from(
+        { length: variantCount },
+        () => null
+      );
 
       await Promise.all(
         Array.from({ length: variantCount }, async (_, idx) => {
-          const profile = VARIANT_PROFILES[idx] ?? VARIANT_PROFILES[1];
+          const profile =
+            variantCount === 1
+              ? VARIANT_PROFILES.find((p) => p.style === variantStyle) ??
+                VARIANT_PROFILES[1]
+              : VARIANT_PROFILES[idx] ?? VARIANT_PROFILES[1];
+          let latest: unknown;
+          let lastError: unknown;
           try {
-            const result = streamObject({
-              model: deepseek(DEEPSEEK_MODEL),
-              schema: OutputSchema,
-              system: buildSystemPrompt(
-                input.platform,
-                profile.style,
-                input.targetMarket
-              ),
-              prompt,
-              temperature: profile.temperature,
-            });
-            for await (const partial of result.partialObjectStream) {
-              writeLine(controller, { idx, partial });
+            for (const candidate of models) {
+              try {
+                const result = streamObject({
+                  model: candidate.model,
+                  schema: OutputSchema,
+                  system: buildSystemPrompt(input.platform, profile.style, input.targetMarket),
+                  prompt,
+                  temperature: profile.temperature,
+                });
+                for await (const partial of result.partialObjectStream) {
+                  latest = partial;
+                  writeLine(controller, { idx, partial });
+                }
+                const normalized = normalizeOptimizedListing(latest, input.platform);
+                if (normalized) {
+                  completed[idx] = normalized;
+                }
+                writeLine(controller, { idx, done: true });
+                return;
+              } catch (err) {
+                lastError = err;
+                await logApiError("/api/optimize/provider", err, {
+                  provider: candidate.id,
+                  variant: idx,
+                  platform: input.platform,
+                });
+              }
             }
-            writeLine(controller, { idx, done: true });
+            throw lastError ?? new Error("No AI provider configured");
           } catch (err) {
-            console.error(`[/api/optimize] variant ${idx} error:`, err);
+            await logApiError("/api/optimize/variant", err, {
+              variant: idx,
+              platform: input.platform,
+            });
             writeLine(controller, {
               idx,
               error:
@@ -146,6 +220,12 @@ export async function POST(req: Request) {
           }
         })
       );
+      const finished = completed.filter((listing): listing is OptimizedListing =>
+        Boolean(listing)
+      );
+      if (finished.length === variantCount) {
+        await setCachedListings(cacheKey, finished);
+      }
       controller.close();
     },
   });
@@ -160,6 +240,34 @@ export async function POST(req: Request) {
   });
 }
 
+function normalizeOptimizedListing(
+  value: unknown,
+  platform: Platform
+): OptimizedListing | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<OptimizedListing>;
+  if (
+    typeof candidate.title !== "string" ||
+    !Array.isArray(candidate.bullets) ||
+    candidate.bullets.length !== 5 ||
+    !candidate.bullets.every((bullet) => typeof bullet === "string") ||
+    typeof candidate.description !== "string" ||
+    typeof candidate.backendKeywords !== "string" ||
+    !Array.isArray(candidate.seoKeywords) ||
+    !candidate.seoKeywords.every((keyword) => typeof keyword === "string")
+  ) {
+    return null;
+  }
+  return {
+    title: candidate.title,
+    bullets: candidate.bullets,
+    description: candidate.description,
+    backendKeywords: candidate.backendKeywords,
+    seoKeywords: candidate.seoKeywords,
+    platform,
+  };
+}
+
 /**
  * Emit a mock listing in chunks with small delays so the dev UI still
  * feels live. Only used when DEEPSEEK_API_KEY is missing.
@@ -169,7 +277,7 @@ async function simulateMockStream(
   writeLine: (
     c: ReadableStreamDefaultController<Uint8Array>,
     obj: unknown
-  ) => void,
+  ) => boolean,
   idx: number,
   full: OptimizedListing
 ) {
@@ -196,7 +304,7 @@ async function simulateMockStream(
     full,
   ];
   for (const partial of stages) {
-    writeLine(controller, { idx, partial });
+    if (!writeLine(controller, { idx, partial })) return;
     await wait(120);
   }
   writeLine(controller, { idx, done: true });
