@@ -171,6 +171,33 @@ function PseoView({
         </ul>
       </section>
 
+      {/* Quick wins — sub-niche-specific actionable tips, each corresponding
+          to one of the pain points above. Adds ~130 words of unique copy per
+          sub-niche page to lift Google's content-quality signal. */}
+      {subNiche && subNiche.tips.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold">
+            Quick wins for your {subNiche.label.toLowerCase()} listing
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-stone-600 dark:text-stone-400">
+            The fixes that move the needle fastest — applied directly to your copy by the optimizer below.
+          </p>
+          <ol className="mt-4 space-y-3">
+            {subNiche.tips.map((tip, i) => (
+              <li
+                key={i}
+                className="flex gap-3 rounded-lg border border-stone-200 bg-stone-50 p-4 dark:border-stone-800 dark:bg-stone-950/50"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+                  {i + 1}
+                </span>
+                <span className="text-sm text-stone-700 dark:text-stone-300">{tip}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       {/* Winning title formula — adds ~50 words of unique, platform-specific
           guidance per page. Renders only on category-level pages (not
           sub-niche) where we have the sample listing to anchor the example. */}

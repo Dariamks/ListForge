@@ -15,6 +15,8 @@ export interface SubNiche {
   hook: string;
   /** 3 buyer pain points unique to this sub-niche */
   pains: string[];
+  /** 3 actionable optimization tips that directly address the pain points */
+  tips: string[];
 }
 
 export interface Category {
@@ -48,6 +50,11 @@ export const CATEGORIES: Category[] = [
           "Material truth (304 vs 201 stainless, zinc alloy) is usually buried in bullets",
           "Gift-set variants need distinct copy, not the single-unit title recycled",
         ],
+        tips: [
+          "Put 'easy clean' or 'dishwasher safe' in your title's first 60 characters — that's the exact phrase buyers search",
+          "State steel grade (304 stainless, zinc alloy) in bullet 1 — it's the trust signal that justifies a premium price over unbranded competitors",
+          "Give gift-set variants a separate title with 'gift set' and piece count; never reuse the single-unit title",
+        ],
       },
       {
         slug: "peelers-graters",
@@ -57,6 +64,11 @@ export const CATEGORIES: Category[] = [
           "Blade-type keywords (Y-peeler, julienne, serrated) often missing from title",
           "Safety copy (finger guards, non-slip base) gets lost in feature lists",
           "Multi-pack listings need different hooks than single-piece hero units",
+        ],
+        tips: [
+          "Name the blade type explicitly in your title (Y-peeler, julienne, microplane) — generic 'peeler' won't rank for the specific queries that convert",
+          "Move safety features (finger guard, non-slip grip) to bullet 1 or 2 — they're conversion drivers, not afterthoughts",
+          "For multi-pack listings, lead with the count and variety ('4-piece peeler set') rather than copying single-item copy",
         ],
       },
       {
@@ -68,6 +80,11 @@ export const CATEGORIES: Category[] = [
           "Elderly and arthritis-friendly keywords often missing despite being the real intent",
           "Electric models compete on battery life and noise — specs usually in images, not text",
         ],
+        tips: [
+          "For smooth-edge models, put 'no sharp edges' or 'safe-cut' in the title — buyers search that exact phrase and few listings surface it",
+          "Include 'arthritis-friendly' or 'easy-grip' in title or bullet 1 if your product qualifies — it's the primary purchase driver for a large buyer segment",
+          "For electric models, list battery life in months and decibel level in bullet 1 — these specs live in photos on competitor listings and yours will stand out",
+        ],
       },
       {
         slug: "silicone-tools",
@@ -77,6 +94,11 @@ export const CATEGORIES: Category[] = [
           "'Heat resistant to 500°F' must be in title or first bullet, not paragraph 3",
           "Food-grade / BPA-free / LFGB claims get repeated verbatim, eroding trust",
           "Color-variant listings split reviews; copy rarely mentions full palette upfront",
+        ],
+        tips: [
+          "Place the maximum heat rating (e.g. '446°F / 230°C') in your title — it's the top conversion keyword for silicone tools and most titles skip it",
+          "Mention your food-safety certification once, then explain what it means — 'LFGB-certified (Europe's strictest food standard)' outperforms bare 'BPA-free' claims",
+          "List the full color palette and note 'reviews shared across all colors' in your description — this prevents review-dilution anxiety that stops multi-color shoppers from committing",
         ],
       },
     ],
@@ -100,6 +122,11 @@ export const CATEGORIES: Category[] = [
           "Buyers can't tell if product is loop, tube with handles, or booty band without photos",
           "Natural-latex vs TPE distinction matters for allergies — usually hidden",
         ],
+        tips: [
+          "List the full resistance range (e.g. '5-150 lb') and each color's level in bullet 1 — it's the primary search filter buyers apply before reading anything else",
+          "Name the band type explicitly in your title (loop band, tube band with handles, booty band) — buyers filter by type first and won't scroll past an ambiguous listing",
+          "State 'natural latex' or 'TPE latex-free' in title or bullet 1 — allergy-conscious buyers filter on material before reading specs",
+        ],
       },
       {
         slug: "yoga-mats",
@@ -109,6 +136,11 @@ export const CATEGORIES: Category[] = [
           "Thickness in title wins searches — 'extra thick 1/2 inch' outperforms 'premium yoga mat'",
           "Non-slip claims need texture/grip specifics, not marketing adjectives",
           "Eco-credential claims (biodegradable, SGS-certified) get buried under brand fluff",
+        ],
+        tips: [
+          "Lead your title with thickness in both inches AND mm (e.g. '1/2 inch / 12mm') — it's the #1 search keyword and most listings skip the dual-unit format",
+          "Replace 'non-slip' with the texture mechanic: 'micro-suede top layer' or 'natural rubber grip base' converts skeptical buyers who've been burned by vague claims",
+          "Move your SGS or OEKO-TEX certification to bullet 1 with a one-line explanation — it's your key differentiator over unbranded competitors and gets buried in most listings",
         ],
       },
       {
@@ -120,6 +152,11 @@ export const CATEGORIES: Category[] = [
           "Ball-bearing vs fixed-handle mechanism matters to boxing buyers — usually unmentioned",
           "Adjustability ('fits up to 6'6')' is a conversion driver left out of bullets",
         ],
+        tips: [
+          "State the rope type in your first 5 title words (speed rope, weighted rope, beaded rope) — different buyer segments won't scroll past an unclear listing",
+          "For speed ropes, specify bearing type (sealed ball bearing, dual bearing) in bullet 1 — it's the primary technical differentiator for serious athletes",
+          "State max adjustable length in title or bullet 1 ('fits up to 6'6\"') — height compatibility is a top pre-purchase question that stalls conversions when unanswered",
+        ],
       },
       {
         slug: "foam-rollers",
@@ -129,6 +166,11 @@ export const CATEGORIES: Category[] = [
           "Firmness level must be explicit — 'medium density EPP' beats 'premium quality'",
           "Length variants (12' vs 18' vs 36') serve different uses, rarely explained",
           "Vibrating / electric rollers need battery life & noise levels upfront",
+        ],
+        tips: [
+          "Name firmness explicitly in your title (soft, medium, firm) and back it with material ('firm EPP foam') — 'premium' is meaningless in this category",
+          "Pair each length variant with its use case in bullet 1: 12\" for targeted pressure, 36\" for full back — this prevents wrong-size returns and aids discovery",
+          "For vibrating rollers, put battery life in hours and charge time in bullet 1 — they're the top objections in negative reviews and must be addressed proactively",
         ],
       },
     ],
@@ -152,6 +194,11 @@ export const CATEGORIES: Category[] = [
           "Size-to-breed mapping (S/M/L → lb ranges) usually missing",
           "Squeaker vs non-squeaker preference split isn't surfaced in listings",
         ],
+        tips: [
+          "Replace 'indestructible' with 'for aggressive chewers' — Amazon flags unqualified durability claims, and 'tough chewer' is also a higher-volume search term",
+          "Map each size to a weight range in bullet 1 (S: under 20 lb, M: 20-50 lb, L: 50+ lb) — breed-by-weight is how owners shop, not by size letter alone",
+          "Call out squeaker presence or absence in bullet 1 — it's a near-equal preference split that affects purchase decisions more than most other specs",
+        ],
       },
       {
         slug: "cat-trees",
@@ -161,6 +208,11 @@ export const CATEGORIES: Category[] = [
           "Assembly difficulty and 'tools included' info are conversion blockers when missing",
           "Small-apartment variants need dedicated 'space-saving' copy, not main-SKU spillover",
           "Weight limit per perch matters for large-breed cats — usually under-specified",
+        ],
+        tips: [
+          "State assembly time estimate and whether tools are included in bullet 1 — assembly uncertainty is the #1 reason shoppers abandon cat tree listings before adding to cart",
+          "For compact models, put overall footprint (W × D in inches) and 'apartment-sized' in your title — small-space buyers filter by these before reading anything else",
+          "List weight capacity per platform, not just total — 'each perch holds up to 15 lb' prevents large-cat returns and builds more trust than a single total figure",
         ],
       },
       {
@@ -172,6 +224,11 @@ export const CATEGORIES: Category[] = [
           "Blade-replacement / maintenance info absent — drives negative reviews",
           "Noise level (for fearful pets) rarely called out even when it's a selling point",
         ],
+        tips: [
+          "Name the target coat type in your title (double coat, short hair, curly) — coat-specific search volume exceeds generic 'pet brush' by 3-5× and converts at a higher rate",
+          "Add blade replacement interval and estimated cost in bullet 2 — buyers who discover this post-purchase leave negative reviews; stating it upfront prevents the surprise",
+          "If your clipper is under 60 dB, put 'quiet' and the decibel rating in bullet 1 — it's the primary filter for owners of anxious or noise-sensitive pets",
+        ],
       },
       {
         slug: "pet-feeders",
@@ -181,6 +238,11 @@ export const CATEGORIES: Category[] = [
           "Programmable portion size (1-50g) and schedule flexibility often left in images only",
           "Power source (battery, plug-in, both) is a deal-breaker buyers search for",
           "Dishwasher-safe and material-safety claims buried in bullet 4 instead of bullet 1",
+        ],
+        tips: [
+          "Put portion range and meal count per day in your title or bullet 1 — buyers compare these numbers across multiple listings and yours must surface them immediately",
+          "State power source in title or first bullet (battery / AC adapter / dual power) — 'battery-only' discovered post-purchase is one of the most common negative review triggers",
+          "Move 'BPA-free, dishwasher-safe tray' to bullet 1 — these are hygiene signals that pet parents check before anything else, especially for food-contact surfaces",
         ],
       },
     ],
@@ -204,6 +266,11 @@ export const CATEGORIES: Category[] = [
           "pH range and concentration % claims are ignored unless you explain why they matter",
           "Dark-bottle / air-pump packaging is a trust signal that goes unmentioned",
         ],
+        tips: [
+          "Name the vitamin C derivative in your title (L-ascorbic acid, SAP, THD) — educated skincare buyers search by form, not just 'vitamin C serum'",
+          "State concentration % and pH range together in bullet 1, then add context: '15% L-ascorbic at pH 3.5 — the clinically effective range for collagen synthesis'",
+          "Call out UV-protective dark glass and airless pump as stability features in bullet 2 — it demonstrates formulation knowledge and builds trust over standard dropper competitors",
+        ],
       },
       {
         slug: "retinol-products",
@@ -213,6 +280,11 @@ export const CATEGORIES: Category[] = [
           "Retinol % (0.25, 0.5, 1.0) must be in title for the buyer-intent match",
           "Encapsulated vs standard retinol distinction matters to sensitive-skin buyers",
           "Retinal (retinaldehyde) vs retinol confusion costs sales — explain the difference",
+        ],
+        tips: [
+          "Put the retinol percentage in your title (e.g. '0.5% Retinol Serum') — this is the primary search filter and the first spec comparison-shoppers look for",
+          "For encapsulated retinol, explain the mechanism in bullet 1: 'time-released micro-encapsulation for sensitive skin' outperforms 'encapsulated retinol' alone",
+          "If you use retinal (retinaldehyde), clarify in bullet 2: 'retinaldehyde — 11× more potent than retinol' prevents buyer confusion and sets the right expectations",
         ],
       },
       {
@@ -224,6 +296,11 @@ export const CATEGORIES: Category[] = [
           "Reef-safe, fragrance-free, non-comedogenic claims repeated instead of substantiated",
           "White-cast complaints dominate reviews — address pigmentation in bullets",
         ],
+        tips: [
+          "Put 'mineral' or 'chemical' in your title alongside SPF — it's the first filter for skin-conscious buyers and eliminates wrong-fit returns before they happen",
+          "Back every claim with a mechanism: 'reef-safe (octinoxate-free)' or 'non-comedogenic (tested on acne-prone skin)' — bare claims without explanation are ignored",
+          "Address white cast proactively in bullet 2: 'nano zinc for invisible finish on all skin tones' or state honestly 'slight white cast, best for fair to medium skin' — honesty prevents the reviews that tank ranking",
+        ],
       },
       {
         slug: "face-masks",
@@ -233,6 +310,11 @@ export const CATEGORIES: Category[] = [
           "Mask type must be in title — 'sheet mask' vs 'clay mask' can't be deduced from image alone",
           "Hero ingredient (hyaluronic, kaolin, AHA) must replace generic 'hydrating' adjectives",
           "Skin-type targeting (oily, dry, sensitive) often missing, leading to wrong-fit returns",
+        ],
+        tips: [
+          "Lead your title with mask type (clay mask, sheet mask, sleeping mask, peel-off mask) — image-only type identification causes returns and negative reviews at scale",
+          "Replace 'deeply hydrating' with the active ingredient and percentage: '2% hyaluronic acid' or '10% kaolin clay' — specificity converts informed buyers who are comparison-shopping",
+          "State 'for oily / dry / sensitive skin' in title or bullet 1 — skin-type mismatch is the #1 cause of negative reviews in this category and a preventable return driver",
         ],
       },
     ],
@@ -256,6 +338,11 @@ export const CATEGORIES: Category[] = [
           "BPA/BPS/phthalate-free claims need to specify scope — which parts",
           "Dishwasher + sterilizer compatibility is a returning-buyer question, often unanswered",
         ],
+        tips: [
+          "Pair nipple flow rate and age stage in your title (e.g. 'Slow Flow Newborn 0-3M') — parents filter by both simultaneously and your title must surface them together",
+          "Specify which parts are BPA/BPS-free: 'BPA-free bottle, nipple, and collar' beats a single blanket claim and builds significantly more trust with safety-conscious parents",
+          "List dishwasher-safe (top rack) and sterilizer compatibility (electric, microwave, boiling) in bullet 1 — feeding parents check this before re-buying and it prevents a common pre-purchase question",
+        ],
       },
       {
         slug: "baby-monitors",
@@ -265,6 +352,11 @@ export const CATEGORIES: Category[] = [
           "WiFi-free / non-app models attract privacy buyers — keyword is rarely used in title",
           "Battery life of the parent unit is searched for, usually only in spec images",
           "Range (ft) in open vs through-walls needs realistic numbers, not marketing peaks",
+        ],
+        tips: [
+          "If your monitor is WiFi-free, put 'no WiFi, no app required' in your title — privacy-first parents search exactly these phrases and they're underserved in most listings",
+          "State parent unit battery life in hours in bullet 1 — it's cited in almost every negative review when it disappoints; surfacing it upfront sets the right expectation",
+          "Give realistic range ('up to 900 ft open / 160 ft through walls') in bullet 1 — 'up to 1000 ft' with no qualification is the top review complaint trigger in this category",
         ],
       },
       {
@@ -276,6 +368,11 @@ export const CATEGORIES: Category[] = [
           "100% silicone vs silicone-plastic-blend matters for safety-conscious buyers",
           "Age range (0-3m vs 3-6m vs 6m+) must be in title, not bullet 5",
         ],
+        tips: [
+          "State 'freezer-safe' or 'fridge-only' explicitly in title or bullet 1 — parents search for cooling method before all other teether attributes",
+          "Specify '100% food-grade silicone' (not 'silicone' alone) in your title — parents of young infants verify material composition before anything else",
+          "Put the age range in your title (e.g. '3-6 Months') — parents browsing by developmental stage skip listings where age isn't immediately visible in the title",
+        ],
       },
       {
         slug: "swaddles",
@@ -285,6 +382,11 @@ export const CATEGORIES: Category[] = [
           "TOG rating (0.5, 1.0, 2.5) is industry-standard — buyers search by it",
           "Transition-phase products (arms up/down) need their own listing, not a variant note",
           "Organic-cotton / GOTS-certified claims often unverified — buyers check photos for labels",
+        ],
+        tips: [
+          "Put the TOG rating in your title (e.g. '1.0 TOG') — temperature-conscious parents filter by TOG before reading anything else, and it's absent from most competitor titles",
+          "Give arms-up and arms-down positions separate variant listings with distinct titles — parents shopping by transition stage won't find a buried variant note in the description",
+          "Add a physical label photo in image slot 2 and reference it in bullets: 'GOTS-certified (tag visible in image 2)' — unverifiable certification claims are increasingly discounted",
         ],
       },
     ],
@@ -308,6 +410,11 @@ export const CATEGORIES: Category[] = [
           "BTU output comparison is a real buyer intent — put the number in bullet 1",
           "Weight and pack size drive ultralight-backpacker buyers — bury them and lose the sale",
         ],
+        tips: [
+          "Name the fuel type in your title (isobutane canister stove, propane, wood-burning) — fuel compatibility is the first decision backpackers make, and wrong-fuel returns are common",
+          "Put BTU output in bullet 1 with context: '10,000 BTU boils 1L in 3 min' is a concrete buying signal that outperforms vague 'powerful' claims",
+          "For backpacking models, put packed weight and packed dimensions in title or bullet 1 — ultralight buyers filter these before reading brand or feature claims",
+        ],
       },
       {
         slug: "sleeping-bags",
@@ -317,6 +424,11 @@ export const CATEGORIES: Category[] = [
           "Lower-limit vs comfort rating confusion sells wrong bag to wrong buyer",
           "Fill power (down) or fill weight (synthetic) must be quantified",
           "Zipper direction / left-right matching for couples rarely called out",
+        ],
+        tips: [
+          "State both comfort and lower-limit temperatures in your title (e.g. '+20°F comfort / -10°F lower limit') — the rating gap is what causes wrong-bag returns",
+          "For down bags, put fill power in bullet 1 (e.g. '800-fill power'); for synthetic, list fill weight — buyers use these to calculate warmth-to-weight ratio when comparing",
+          "Specify zipper side (left-zip or right-zip) in title or bullet 1, and whether it's mate-able — couple buyers actively filter on this and listings that omit it lose easy sales",
         ],
       },
       {
@@ -328,6 +440,11 @@ export const CATEGORIES: Category[] = [
           "Frame type (internal, frameless, external) differentiates use-case — often unclear",
           "Hydration-bladder compatibility needs an explicit yes/no/bladder-included statement",
         ],
+        tips: [
+          "Put liter capacity as the first noun in your title (e.g. '65L Hiking Backpack') — volume is the top search keyword and the most-compared spec; generic 'large' won't rank",
+          "Name the frame type in bullet 1 with context: 'internal frame (ideal for technical trails)' or 'frameless ultralight (under 2 lb)' — this prevents use-case mismatch returns",
+          "State hydration compatibility explicitly: 'fits 3L bladder (not included)' or 'includes 2L bladder' — vague 'hydration compatible' prompts a pre-purchase question that kills conversions",
+        ],
       },
       {
         slug: "camping-lanterns",
@@ -337,6 +454,11 @@ export const CATEGORIES: Category[] = [
           "Lumen rating at low/medium/high — buyers want all three, usually see only peak",
           "USB-C, solar, and hand-crank charging options rarely all surfaced",
           "IPX water resistance rating matters for rain campers — often buried in specs",
+        ],
+        tips: [
+          "List lumen output at all brightness modes in bullet 1 (e.g. '400/200/50 lm') — peak-only ratings are widely distrusted; low-mode runtime is what serious campers actually use",
+          "Name every charging method in bullet 1 or title: 'USB-C + solar panel + hand crank' — multi-source charging is a top conversion driver for emergency preparedness buyers",
+          "Put your IPX rating and what it means in bullet 1: 'IPX6 — withstands heavy rain' — campers treat water resistance as a required spec, not a bonus feature",
         ],
       },
     ],
@@ -360,6 +482,11 @@ export const CATEGORIES: Category[] = [
           "Ink-refill availability is a re-purchase driver, rarely mentioned upfront",
           "Pack-size math (24-count vs 48-count) affects per-pen pricing — surface it",
         ],
+        tips: [
+          "Specify tip shape (needle-point vs bullet tip) in bullet 1 — left-handers and bullet journal users filter on this, and needle-point is a premium, higher-converting search term",
+          "State whether ink refills are available and give the refill model number in bullet 2 — it's the top objection left out of titles that drives refill-focused buyers to competitors",
+          "Put tip size (in mm) and ink count together in your title (e.g. '0.5mm 60-Pack') — they're the two specs buyers use to filter before reading a word of copy",
+        ],
       },
       {
         slug: "sticky-notes",
@@ -369,6 +496,11 @@ export const CATEGORIES: Category[] = [
           "Size in inches + mm reaches international buyers — usually only one is present",
           "Restickable / super-sticky distinction rarely surfaced",
           "Pastel vs neon vs classic color set preference is a keyword worth targeting",
+        ],
+        tips: [
+          "Include size in both inches and mm in title (e.g. '3×3 in / 76×76 mm') — dual-unit sizing opens your listing to international search traffic at zero cost",
+          "Lead with adhesive type in bullet 1: 'super-sticky (2× standard adhesive)' or 'repositionable low-tack' — wrong stickiness is the top return reason in this category",
+          "Name the color palette style in your title or first bullet (pastel, neon, earth tones) — color set is a major purchase trigger for planners and bullet journal users",
         ],
       },
       {
@@ -380,6 +512,11 @@ export const CATEGORIES: Category[] = [
           "Modular / stackable claims need photos + copy, not just one or the other",
           "Cable-pass-through features differentiate premium units — often unlabeled",
         ],
+        tips: [
+          "Put full dimensions (W × D × H) in your title or bullet 1 — desk space is limited and buyers need to confirm fit before ordering; it's the first filter they apply",
+          "For modular sets, describe the assembly logic in bullet 1 and reference an image: 'each unit snaps to the next (see image 3)' — photo-only modular claims don't convert",
+          "If you have a cable pass-through, name it explicitly in bullet 2 with the slot dimensions — it differentiates from solid-back competitors and targets standing-desk buyers specifically",
+        ],
       },
       {
         slug: "planner-notebooks",
@@ -389,6 +526,11 @@ export const CATEGORIES: Category[] = [
           "Paper GSM (80 vs 100 vs 120) affects fountain-pen bleed — buyers search for it",
           "Dated vs undated must be in title — wrong fit = instant return",
           "Page count and ribbon/pocket features rarely quantified",
+        ],
+        tips: [
+          "Put paper weight in your title or bullet 1 (e.g. '100 GSM') — fountain-pen users filter by this specifically, and it's a quality signal that justifies premium pricing",
+          "Put 'dated' or 'undated' in your title — it's a binary that determines purchase fit; the wrong one is the #1 return reason in this category",
+          "State total page count, ribbon count, and pocket count in bullet 1 — these are the quick-comparison metrics planners check first when cross-shopping multiple notebooks",
         ],
       },
     ],
@@ -412,6 +554,11 @@ export const CATEGORIES: Category[] = [
           "Belt width (1.25' vs 1.5') matters for jean-loop fit — rarely in title",
           "Reversible / single-sided distinction needs an immediate callout",
         ],
+        tips: [
+          "Name leather grade in your title (full-grain, top-grain, genuine) — educated buyers filter by grade, and 'genuine leather' signals the bottom tier; avoid it if you have better",
+          "Put belt width in your title (e.g. '1.5 inch') — jean-loop compatibility is the primary search intent for both dress and casual belts",
+          "State 'reversible (black + brown)' or 'single-color' in bullet 1 — reversible is a premium conversion driver; omitting it leaves an easy differentiating point unused",
+        ],
       },
       {
         slug: "silk-scarves",
@@ -421,6 +568,11 @@ export const CATEGORIES: Category[] = [
           "100% mulberry silk vs silk blend must be explicit — blend shoppers feel deceived otherwise",
           "Momme weight (16mm vs 22mm) is a quality signal unfamiliar to casual buyers — educate in bullets",
           "Hand-rolled edge vs machine-hemmed is a luxury cue worth calling out",
+        ],
+        tips: [
+          "Put '100% mulberry silk' or 'silk blend (X% silk)' explicitly in your title — misleading shoppers with just 'silk' on a blend generates returns and negative reviews at a high rate",
+          "State momme weight in bullet 1 with context: '22 momme — medium-weight, drapes without wrinkling' — raw numbers without explanation are ignored by non-expert buyers",
+          "Describe edge finish in bullet 2: 'hand-rolled and hand-stitched edge' is a luxury differentiator that justifies premium pricing and converts aspirational buyers",
         ],
       },
       {
@@ -432,6 +584,11 @@ export const CATEGORIES: Category[] = [
           "Face-shape fit guidance (oval, round, square) converts undecided buyers",
           "Lens material (polycarbonate vs CR-39) affects durability — rarely in copy",
         ],
+        tips: [
+          "Combine polarized + UV400 in your title — 'polarized UV400' is a compound search term that outperforms either word alone; add 'category-3' in bullet 1 for spec-oriented buyers",
+          "Add 'best for oval / heart / square face shapes' in bullet 2 — face-shape guidance is the top decision aid for fashion sunglasses and dramatically reduces exchange rates",
+          "Name lens material in bullet 1 with durability context: 'polycarbonate lens (impact-resistant, 10× lighter than glass)' — it's a differentiating point almost no competitor captures in copy",
+        ],
       },
       {
         slug: "hair-accessories",
@@ -441,6 +598,11 @@ export const CATEGORIES: Category[] = [
           "Hair-thickness guidance (fine, medium, thick) prevents mis-fit returns",
           "Material-truth claims (real silk scrunchie vs satin-blend) matter to educated buyers",
           "Style-era keywords (Y2K, 90s, clean-girl) are search drivers, often absent",
+        ],
+        tips: [
+          "State which hair thickness the accessory is designed for in bullet 1 (fine, medium, thick, all hair types) — wrong-thickness returns are the primary complaint driver in this category",
+          "Specify fabric composition precisely: '100% mulberry silk' vs '22mm satin weave' vs 'polyester satin' — educated buyers distinguish these and the distinction drives premium pricing",
+          "Include the style trend keyword in your title or bullet 1 (Y2K, 90s-inspired, clean-girl, coastal grandma) — trend-search volume spikes are where organic growth comes from for accessories",
         ],
       },
     ],
@@ -464,6 +626,11 @@ export const CATEGORIES: Category[] = [
           "Drop-test rating (MIL-STD-810G) backed up or not — builds trust",
           "MagSafe-compatible vs MagSafe-certified is a distinction the savvy buyer cares about",
         ],
+        tips: [
+          "List each compatible model variant separately (iPhone 16, 16 Plus, 16 Pro, 16 Pro Max as distinct ASINs or clearly delimited in title) — 'series' catch-alls cause wrong-fit returns and can get listings suppressed",
+          "If you have MIL-STD-810G certification, name the test and drop height in bullet 1: 'MIL-STD-810G tested, 6 ft drop protection' — uncertified 'military grade' claims are widely distrusted",
+          "Distinguish MagSafe-certified (Apple-approved, 15W) from MagSafe-compatible (up to 12W) in bullet 1 — tech-aware buyers know the difference and will choose certified over compatible",
+        ],
       },
       {
         slug: "screen-protectors",
@@ -473,6 +640,11 @@ export const CATEGORIES: Category[] = [
           "'Full coverage' vs 'case-friendly' is a common return cause — disambiguate",
           "Privacy vs standard vs matte vs blue-light: four different buyers, usually one listing",
           "Installation kit contents (alignment frame, dust stickers) rarely itemized",
+        ],
+        tips: [
+          "State coverage type in your title: 'case-friendly (leaves 1mm edge)' or 'full-coverage (edge-to-edge, requires compatible case)' — coverage confusion is the #1 return cause in this category",
+          "Create separate ASINs for privacy, matte, standard, and blue-light filter variants — buyers search by type first, not brand, and a single listing cannot rank for all four intents",
+          "List installation kit contents in bullet 1 (alignment frame, 2 dust stickers, microfiber cloth, alcohol wipe) — a complete kit is a premium signal that justifies higher pricing",
         ],
       },
       {
@@ -484,6 +656,11 @@ export const CATEGORIES: Category[] = [
           "PPS / PD power-delivery support matters for Samsung fast-charging — often omitted",
           "Multi-device pads need per-pad wattage breakdown, not just top-line total",
         ],
+        tips: [
+          "State protocol and max wattage in your title: 'MagSafe 15W' or 'Qi2 15W' or 'Qi 10W' — buyers know the speed hierarchy and choose accordingly; burying the spec causes returns",
+          "For Samsung buyers, call out PPS support in bullet 1 with expected charge time: 'PPS-compatible, 0-50% in 30 min on Galaxy S25' outperforms the vague 'fast charge'",
+          "For multi-device pads, list each pad's individual wattage in bullet 1 (phone 15W / watch 5W / buds 2.5W) — 'total 22.5W' misleads and triggers returns when buyers realize the split",
+        ],
       },
       {
         slug: "phone-mounts",
@@ -493,6 +670,11 @@ export const CATEGORIES: Category[] = [
           "Mount interface (MagSafe, adhesive, air-vent, suction) must be in title",
           "Max phone size (width in mm) with or without case is a fit killer",
           "Vibration / road-bump stability is the #1 negative review — address it in bullets",
+        ],
+        tips: [
+          "Name the mount interface in your title (MagSafe vent mount, suction cup dash mount, adhesive bike mount) — interface type is the first filter buyers apply; missing it loses qualified traffic",
+          "State max width with AND without a case in bullet 1 (e.g. 'fits phones up to 88mm wide, with or without case') — omitting either measurement is the most common return trigger",
+          "Address vibration stability proactively in bullet 2 with a mechanical claim: 'dual-locking telescoping arm dampens road vibration' — it's the #1 negative review complaint across all mount types",
         ],
       },
     ],
@@ -516,6 +698,11 @@ export const CATEGORIES: Category[] = [
           "Indoor-only vs weatherproof distinction must be unmistakable, not footnoted",
           "Energy-monitoring accuracy (kWh precision) is a buying signal for savers — usually vague",
         ],
+        tips: [
+          "Put 'Matter compatible' or 'no hub required' in your title — future-proof compatibility is the top purchase signal for first-time smart home buyers who've been burned by fragmentation",
+          "State indoor/outdoor rating in your title: 'indoor only' or 'outdoor IP44' — an outdoor claim without an IP rating is not credible to technically-aware buyers",
+          "For energy-monitoring models, put kWh precision and tracking history in bullet 1 (e.g. '0.1 kWh precision, 90-day history in app') — vague 'energy monitor' claims don't convert cost-conscious buyers",
+        ],
       },
       {
         slug: "smart-bulbs",
@@ -525,6 +712,11 @@ export const CATEGORIES: Category[] = [
           "Lumens + color-temperature range must be specified — 'bright' is not a spec",
           "Hub-required vs hub-free is a dealbreaker question, often buried",
           "Voice-assistant compatibility (Alexa, Google, HomeKit, SmartThings) needs explicit yes/no per brand",
+        ],
+        tips: [
+          "Put max lumens and color temperature range in bullet 1 (e.g. '1000 lm, 2700K-6500K') — 'smart bulb' is a commodity; lumen + Kelvin spec is what differentiates in search results",
+          "State hub requirement in your title or bullet 1: 'no hub required (Wi-Fi direct)' or 'requires Zigbee hub' — discovering hub dependency post-purchase is the #1 return trigger in this category",
+          "List every compatible voice assistant with explicit confirmation in bullet 1 (Alexa, Google Home, Apple HomeKit, SmartThings — yes or no per platform) — vague 'voice control supported' prompts a pre-purchase question",
         ],
       },
       {
@@ -536,6 +728,11 @@ export const CATEGORIES: Category[] = [
           "Battery life (months, not days) affects buying decision — often unspecified",
           "Indoor vs outdoor (IP rating) confusion drives returns — must be prominent",
         ],
+        tips: [
+          "State detection technology in your title (PIR motion sensor, mmWave presence sensor) — smart home enthusiasts search by tech type; PIR and mmWave serve completely different use cases and shouldn't share a listing",
+          "State battery life in months with usage conditions in bullet 1 (e.g. '12 months on 2×AA at 10 triggers/day') — vague 'long battery life' is distrusted; specificity converts",
+          "Put IP rating and indoor/outdoor designation in title or bullet 1 — a sensor without an IP number on an outdoor claim is not credible to technically-aware buyers",
+        ],
       },
       {
         slug: "security-cameras",
@@ -545,6 +742,11 @@ export const CATEGORIES: Category[] = [
           "Subscription-free / no-monthly-fee messaging is a huge winning angle — often missing",
           "Local storage (SD, NAS, hub) vs cloud-only: privacy buyers read listings for this",
           "Night-vision spec (IR, color, distance in ft) rarely quantified clearly",
+        ],
+        tips: [
+          "If you offer local storage with no subscription, put 'no monthly fee' in your title — subscription fatigue is real and this phrase has high search volume among comparison shoppers",
+          "State storage options explicitly in bullet 1: '128GB microSD included, NAS-compatible, optional cloud' — privacy-focused buyers specifically search for local-first storage",
+          "Quantify night vision with type and distance: 'color night vision up to 30 ft / B&W IR up to 100 ft' — 'night vision included' is a category minimum, not a differentiator",
         ],
       },
     ],
@@ -568,6 +770,11 @@ export const CATEGORIES: Category[] = [
           "Stone size in mm or carat weight rarely in title — it's a core search term",
           "Backing type (screw-back, push-back, lever) matters for sensitive lobes — often unmentioned",
         ],
+        tips: [
+          "Replace standalone 'hypoallergenic' with material specifics: '925 sterling silver, nickel-free' or '14k solid gold' — buyers with sensitivities have been burned by 'hypoallergenic' plated alloys",
+          "Put stone size in your title (e.g. '6mm cubic zirconia' or '0.5 carat') — size drives search queries far more than descriptors like 'delicate' or 'minimalist'",
+          "State backing type in bullet 1 (screw-back, push-back, flat-back threadless) — earring backs are the #1 pre-purchase question for people with sensitive lobes and missing this info stalls the sale",
+        ],
       },
       {
         slug: "pendant-necklaces",
@@ -577,6 +784,11 @@ export const CATEGORIES: Category[] = [
           "Chain length (16', 18', 20') needs an explicit mention, not a size-chart image",
           "Initial / birthstone / custom options usually share a single listing — split them",
           "Tarnish resistance (PVD, rhodium-plated) is a durability signal buyers search for",
+        ],
+        tips: [
+          "Put chain length in your title (e.g. '18-inch chain') — length affects layering and neckline fit; it's the #1 pre-purchase question and belongs in the title, not a buried spec table",
+          "Give initial, birthstone, and custom engraving options separate ASINs with distinct titles — they serve different gift intents and cannot all rank for the same search terms",
+          "Name your tarnish-resistant finish in bullet 1: '18K gold PVD plating (waterproof, tarnish-resistant)' — standard gold-plated wears off; PVD doesn't, and buyers who know the difference will buy yours",
         ],
       },
       {
@@ -588,6 +800,11 @@ export const CATEGORIES: Category[] = [
           "Set count (3-piece, 5-piece) and size uniformity affect fit confidence",
           "Finish compatibility (won't scratch, mixes gold/silver) is reassurance copy worth adding",
         ],
+        tips: [
+          "Put band width in your title (e.g. '2mm stackable ring') — width determines how many rings stack without overcrowding; it's the primary spec buyers compare across listings",
+          "State set count and whether all pieces are the same size in bullet 1 (e.g. '5-piece set, all size 7') — mixed-size sets cause returns; same-size sets need to say so explicitly",
+          "Address metal mixing in bullet 2: 'gold and silver PVD-coated finish won't scratch each other' — buyers who stack mixed metals worry about damage; answer it before they ask",
+        ],
       },
       {
         slug: "charm-bracelets",
@@ -597,6 +814,11 @@ export const CATEGORIES: Category[] = [
           "Compatibility-with-X claims need legal care but are search drivers — handle both",
           "Number of included charms and whether they're replaceable matters to gifters",
           "Metal specifics (solid vs plated) for charm attachments rarely specified",
+        ],
+        tips: [
+          "Use 'compatible with Pandora-style bracelets' instead of brand-name claims — it ranks for the intent without trademark risk and is immediately understood by the target buyer",
+          "State charm count and describe replaceability in bullet 1 (e.g. '12 charms included, threaded S925 clasp for easy swaps') — gifters evaluate value by charm count before anything else",
+          "Specify metal type for chain, clasp, and charm core separately: '925 sterling silver chain, lobster clasp, zinc alloy charms' — lumped 'metal' claims signal low quality to informed jewelry buyers",
         ],
       },
     ],
@@ -620,6 +842,11 @@ export const CATEGORIES: Category[] = [
           "Exact print dimensions in inches AND cm reach both US and EU buyers",
           "Orientation (landscape, portrait, triptych) and multi-panel count need explicit callout",
         ],
+        tips: [
+          "Lead your title with medium and framing: 'Framed Canvas Wall Art' or 'Unframed Art Print' — buyers search by medium first and cannot always determine it from product images",
+          "List dimensions in both inches and centimeters in bullet 1 — dual units capture both US domestic and metric-literate buyers with a single listing",
+          "State orientation and panel count in your title (e.g. '3-Panel Canvas, Landscape, 60×40 in total') — triptychs and multi-panel sets must communicate composition upfront to avoid installation surprises",
+        ],
       },
       {
         slug: "throw-pillows",
@@ -629,6 +856,11 @@ export const CATEGORIES: Category[] = [
           "'Cover only' vs 'insert included' must be in title, not bullet 3",
           "Material (linen blend, velvet, boucle) and wash-care rarely paired",
           "Size in inches + common equivalents (18x18, 20x20) affects sofa fit — surface both",
+        ],
+        tips: [
+          "Put 'cover only' or 'with insert' in your title as the second phrase after size — it's the single most-searched qualifier in throw pillows and the source of most negative reviews when missing",
+          "State material and wash care together in bullet 1: 'boucle (hand wash cold, dry flat)' — buyers who love a texture need to know maintenance before committing to a purchase",
+          "Include size in your title with the standard dimensions (18×18 or 20×20) — sofa owners know their cushion size and skip listings where they have to hunt for it",
         ],
       },
       {
@@ -640,6 +872,11 @@ export const CATEGORIES: Category[] = [
           "Pile height (low, medium, high) determines door-clearance and vacuum compatibility",
           "Non-slip backing vs separate rug-pad-required distinction frustrates buyers when hidden",
         ],
+        tips: [
+          "State 'machine washable (standard top-loader up to 5×8 ft)' or 'hand-wash only' in title or bullet 1 — vague 'machine washable' that requires a commercial machine generates the highest return rate in the category",
+          "State pile height in inches or mm and what it means for use: 'low-pile (0.2 in) — fits under doors, easy to vacuum' eliminates a common pre-purchase question",
+          "Put 'non-slip backing included' or 'requires separate rug pad' in bullet 1 — buyers assume non-slip unless told otherwise; the surprise drives negative reviews at a high rate",
+        ],
       },
       {
         slug: "decorative-vases",
@@ -649,6 +886,11 @@ export const CATEGORIES: Category[] = [
           "Opening diameter dictates whether pampas grass / stems fit — usually unspecified",
           "Watertight vs decorative-only must be declared — real flowers are a common use case",
           "Set count and height range (for clustered styling) rarely surfaced as a benefit",
+        ],
+        tips: [
+          "State opening diameter in inches in bullet 1 — pampas grass and stem arrangements require a minimum opening, and buyers who can't determine fit from images will skip your listing",
+          "State 'watertight for fresh flowers' or 'decorative only (porous base, not water-tight)' in bullet 1 — buyers assume vases hold water; discovering otherwise post-purchase triggers returns",
+          "For sets, give height range of all pieces in title or bullet 1 (e.g. '3-piece set, 6/8/10 in') — clustered arrangements depend on height variety; listing only 'set of 3' leaves the key fact out",
         ],
       },
     ],
