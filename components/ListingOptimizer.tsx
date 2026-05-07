@@ -30,6 +30,16 @@ type VariantState = {
   error: string | null;
 };
 
+type CountMetric = "chars" | "bytes";
+
+type LimitStatus = "empty" | "short" | "ok" | "over";
+
+type FieldLimit = {
+  min?: number;
+  max: number;
+  metric: CountMetric;
+};
+
 /** NDJSON line shape from `/api/optimize`. */
 type StreamLine =
   | { meta: { platform: Platform; count: number } }
@@ -53,6 +63,30 @@ const MARKET_OPTIONS = [
 
 const FORM_DRAFT_VERSION = 1;
 const VARIANT_STYLES: VariantStyle[] = ["conservative", "balanced", "creative"];
+const FIELD_LIMITS: Record<
+  Platform,
+  {
+    title: FieldLimit;
+    bullet: FieldLimit;
+    backendKeywords: FieldLimit;
+  }
+> = {
+  amazon: {
+    title: { min: 150, max: 200, metric: "chars" },
+    bullet: { min: 150, max: 250, metric: "chars" },
+    backendKeywords: { max: 249, metric: "bytes" },
+  },
+  "tiktok-shop": {
+    title: { min: 60, max: 100, metric: "chars" },
+    bullet: { min: 60, max: 110, metric: "chars" },
+    backendKeywords: { max: 249, metric: "bytes" },
+  },
+  shopify: {
+    title: { min: 60, max: 90, metric: "chars" },
+    bullet: { min: 80, max: 180, metric: "chars" },
+    backendKeywords: { max: 249, metric: "bytes" },
+  },
+};
 
 function isCompleteListing(p: PartialListing): p is OptimizedListing {
   return (
@@ -79,6 +113,19 @@ function formatFullListing(listing: PartialListing): string {
     `BACKEND KEYWORDS: ${listing.backendKeywords ?? ""}`,
   ];
   return lines.join("\n").trim();
+}
+
+function countValue(value: string, metric: CountMetric): number {
+  if (metric === "bytes") return new TextEncoder().encode(value).length;
+  return Array.from(value).length;
+}
+
+function getLimitStatus(value: string, limit?: FieldLimit): LimitStatus {
+  if (!limit || value.length === 0) return value.length === 0 ? "empty" : "ok";
+  const count = countValue(value, limit.metric);
+  if (count > limit.max) return "over";
+  if (limit.min && count < limit.min) return "short";
+  return "ok";
 }
 
 interface Props {
@@ -622,6 +669,7 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
 
       <div ref={resultAnchorRef} className="scroll-mt-4">
         <ResultPanel
+          platform={platform}
           states={streamStates}
           activeIdx={activeIdx}
           onSelect={setActiveIdx}
@@ -645,6 +693,7 @@ export function ListingOptimizer({ platform, defaultCategory }: Props) {
 const VARIANT_LABELS = ["A · Conservative", "B · Balanced", "C · Creative"];
 
 function ResultPanel({
+  platform,
   states,
   activeIdx,
   onSelect,
@@ -652,6 +701,7 @@ function ResultPanel({
   isStreaming,
   onRegenerate,
 }: {
+  platform: Platform;
   states: VariantState[];
   activeIdx: number;
   onSelect: (idx: number) => void;
@@ -863,11 +913,14 @@ function ResultPanel({
             <Section
               label="Title"
               value={partial.title ?? ""}
+              limit={FIELD_LIMITS[platform].title}
               streaming={!active.done}
             />
             <Section
               label="Bullet points"
               value={bullets.map((b, i) => `${i + 1}. ${b}`).join("\n")}
+              bulletValues={bullets}
+              limit={FIELD_LIMITS[platform].bullet}
               multiline
               streaming={!active.done}
             />
@@ -880,6 +933,7 @@ function ResultPanel({
             <Section
               label="Backend keywords"
               value={partial.backendKeywords ?? ""}
+              limit={FIELD_LIMITS[platform].backendKeywords}
               streaming={!active.done}
             />
             <Section
@@ -897,11 +951,15 @@ function ResultPanel({
 function Section({
   label,
   value,
+  limit,
+  bulletValues,
   multiline = false,
   streaming = false,
 }: {
   label: string;
   value: string;
+  limit?: FieldLimit;
+  bulletValues?: string[];
   multiline?: boolean;
   streaming?: boolean;
 }) {
@@ -916,13 +974,51 @@ function Section({
   }
 
   const hasValue = value.length > 0;
+  const bulletCounts = bulletValues?.map((bullet) => ({
+    text: bullet,
+    count: limit ? countValue(bullet, limit.metric) : bullet.length,
+    status: getLimitStatus(bullet, limit),
+  }));
+  const count = limit ? countValue(value, limit.metric) : value.length;
+  const status =
+    bulletCounts && bulletCounts.length > 0
+      ? bulletCounts.some((item) => item.status === "over")
+        ? "over"
+        : bulletCounts.some((item) => item.status === "short")
+          ? "short"
+          : "ok"
+      : getLimitStatus(value, limit);
+  const statusClass =
+    status === "over"
+      ? "text-red-600 dark:text-red-400"
+      : status === "short"
+        ? "text-amber-700 dark:text-amber-400"
+        : status === "ok"
+          ? "text-emerald-700 dark:text-emerald-400"
+          : "text-stone-400";
+  const limitText = limit
+    ? bulletCounts
+      ? limit.min
+        ? `${limit.min}-${limit.max} ${limit.metric} each`
+        : `<=${limit.max} ${limit.metric} each`
+      : limit.min
+      ? `${count}/${limit.min}-${limit.max} ${limit.metric}`
+      : `${count}/${limit.max} ${limit.metric}`
+    : `${count} chars`;
 
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-500">
-          {label}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-500">
+            {label}
+          </span>
+          {limit && (
+            <span className={`text-xs font-medium ${statusClass}`}>
+              {limitText}
+            </span>
+          )}
+        </div>
         <button
           type="button"
           onClick={copy}
@@ -950,6 +1046,26 @@ function Section({
           />
         )}
       </div>
+      {bulletCounts && bulletCounts.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {bulletCounts.map((item, index) => {
+            const itemClass =
+              item.status === "over"
+                ? "border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-300"
+                : item.status === "short"
+                  ? "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-300"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-300";
+            return (
+              <span
+                key={`${item.text}-${index}`}
+                className={`rounded-md border px-2 py-0.5 text-xs font-medium ${itemClass}`}
+              >
+                B{index + 1}: {item.count}
+              </span>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

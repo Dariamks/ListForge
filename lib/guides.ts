@@ -72,6 +72,13 @@ const EDITORIAL_GUIDES: GuideMeta[] = [
       "A prioritized 30-experiment CRO checklist for Shopify DTC stores. Covers PDP, checkout, trust signals, site speed, upsells, and the 30-day testing cadence that compounds.",
     kind: "editorial",
   },
+  {
+    slug: "amazon-vs-tiktok-shop-vs-shopify",
+    title: "Amazon vs TikTok Shop vs Shopify: Which Listing Style to Use",
+    description:
+      "A practical platform comparison for sellers deciding where to list first, what copy angle to use, and how to adapt one product across marketplace, social commerce, and DTC.",
+    kind: "editorial",
+  },
 ];
 
 const CATEGORY_GUIDES: GuideMeta[] = PLATFORMS.flatMap((p) =>

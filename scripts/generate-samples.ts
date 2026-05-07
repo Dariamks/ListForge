@@ -1,7 +1,7 @@
 /**
  * One-shot generator: produce a real, AI-generated sample listing for each
  * (platform × category) combo (3 × 12 = 36) and persist to
- * `lib/sample-listings.json`. The pSEO pages render this so each page has
+ * `data/sample-listings.json`. The pSEO pages render this so each page has
  * ~400 words of unique, indexable content instead of a near-identical
  * template skeleton.
  *
@@ -27,7 +27,7 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import type { Platform } from "../lib/listing-prompts.js";
 
-const OUT_PATH = "lib/sample-listings.json";
+const OUT_PATH = "data/sample-listings.json";
 const FORCE = process.argv.includes("--force");
 
 // Mirror of the production OutputSchema in app/api/optimize/route.ts.

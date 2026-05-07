@@ -214,9 +214,15 @@ export default function Home() {
           <h2 className="text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl dark:text-stone-100">
             Pick your platform
           </h2>
-          <p className="mt-3 text-stone-600 dark:text-stone-400">
-            Each one gets its own copywriting playbook.
-          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-stone-600 dark:text-stone-400">
+            <p>Each one gets its own copywriting playbook.</p>
+            <Link
+              href="/guides/amazon-vs-tiktok-shop-vs-shopify"
+              className="inline-flex items-center gap-1 text-sm font-medium text-stone-900 hover:text-[var(--accent)] dark:text-stone-100"
+            >
+              Compare the platforms <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
         <div className="grid gap-px overflow-hidden rounded-xl border border-stone-200 bg-stone-200 md:grid-cols-3 dark:border-stone-800 dark:bg-stone-800">
           {PLATFORMS.map((p) => (

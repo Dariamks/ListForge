@@ -802,4 +802,121 @@ export const EDITORIAL_BODY: Record<string, ReactNode> = {
       </p>
     </>
   ),
+
+  "amazon-vs-tiktok-shop-vs-shopify": (
+    <>
+      <p>
+        The same product should not use the same listing on Amazon, TikTok Shop,
+        and Shopify. Amazon buyers compare search results. TikTok Shop buyers
+        decide mid-scroll. Shopify buyers are judging the brand, not just the
+        SKU. Use this guide as the routing table before you rewrite a listing.
+      </p>
+
+      <h2>Fast decision matrix</h2>
+      <div className="not-prose overflow-x-auto rounded-xl border border-stone-200 dark:border-stone-800">
+        <table className="min-w-full divide-y divide-stone-200 text-sm dark:divide-stone-800">
+          <thead className="bg-stone-50 text-left text-xs uppercase tracking-wider text-stone-500 dark:bg-stone-950">
+            <tr>
+              <th className="px-4 py-3">Platform</th>
+              <th className="px-4 py-3">Buyer mode</th>
+              <th className="px-4 py-3">Listing priority</th>
+              <th className="px-4 py-3">Best first move</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-stone-200 bg-white dark:divide-stone-800 dark:bg-stone-950">
+            <tr>
+              <td className="px-4 py-3 font-medium">Amazon</td>
+              <td className="px-4 py-3">Comparison search</td>
+              <td className="px-4 py-3">Keyword-dense title, compliant bullets, backend terms</td>
+              <td className="px-4 py-3">Lead with exact spec + primary keyword in the first 75 chars</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-3 font-medium">TikTok Shop</td>
+              <td className="px-4 py-3">Discovery scroll</td>
+              <td className="px-4 py-3">Hook-first title, demo-ready benefits, creator language</td>
+              <td className="px-4 py-3">Name the problem solved before the product type</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-3 font-medium">Shopify</td>
+              <td className="px-4 py-3">Brand evaluation</td>
+              <td className="px-4 py-3">Voice, reassurance, product story, conversion details</td>
+              <td className="px-4 py-3">Open with the brand promise, then prove it with specs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Use Amazon when buyers already know the category</h2>
+      <p>
+        Amazon is strongest when demand already exists: garlic press, resistance
+        bands, MagSafe case, pet feeder. The buyer is comparing ten thumbnails
+        and asking one question: which result is most obviously right for me?
+        Your title needs the exact product type, the strongest spec, and the
+        compatibility or material fact before mobile truncation.
+      </p>
+      <p>
+        Avoid clever hooks in the title. Put emotional copy in bullet 1, not the
+        first line. Amazon rewards clarity and suppresses risky claims.
+      </p>
+
+      <h2>Use TikTok Shop when the demo creates demand</h2>
+      <p>
+        TikTok Shop is strongest when the product has a visible moment: before
+        and after, one-handed use, setup speed, satisfying texture, compact
+        storage, or an obvious pain point. The title can be more conversational
+        because it sits next to video proof.
+      </p>
+      <p>
+        Write like a creator explaining why the viewer should care in the next
+        two seconds. Specs still matter, but they support the hook instead of
+        leading it.
+      </p>
+
+      <h2>Use Shopify when the brand must carry trust</h2>
+      <p>
+        Shopify is where you sell the full buying environment: product detail
+        page, reviews, shipping reassurance, return policy, bundles, email
+        capture, and the story behind the product. It is best for differentiated
+        products, repeat purchase categories, premium positioning, or products
+        with a community angle.
+      </p>
+      <p>
+        The copy can breathe more than marketplace copy. Use the title for brand
+        tone, then make the description prove the promise with materials, care,
+        compatibility, sizing, and support details.
+      </p>
+
+      <h2>One product, three listing angles</h2>
+      <p>
+        Example product: a 304 stainless garlic press with removable cleaning
+        insert.
+      </p>
+      <ul>
+        <li>
+          <strong>Amazon:</strong> Stainless Steel Garlic Press, 304 Food-Grade
+          Mincer with Easy-Clean Removable Insert, No-Peel Clove Crusher.
+        </li>
+        <li>
+          <strong>TikTok Shop:</strong> Stop peeling garlic by hand | Easy-Clean
+          Stainless Garlic Press for weeknight cooking.
+        </li>
+        <li>
+          <strong>Shopify:</strong> ListForge Heirloom Garlic Press for faster
+          weeknight prep.
+        </li>
+      </ul>
+      <p>
+        None of those are interchangeable. They point at different buyer states:
+        search confidence, scroll curiosity, and brand trust.
+      </p>
+
+      <h2>Recommended workflow</h2>
+      <ol>
+        <li>Write the Amazon version first if the category has existing search demand.</li>
+        <li>Rewrite the same facts into a TikTok Shop hook if the product has a visible demo.</li>
+        <li>Use the Shopify version as the richest source of reassurance and brand proof.</li>
+        <li>Keep the facts identical across all three. Change the angle, not the truth.</li>
+      </ol>
+    </>
+  ),
 };

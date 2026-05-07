@@ -20,7 +20,7 @@ import {
   type VariantStyle,
 } from "@/lib/listing-prompts";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const PLATFORMS: Platform[] = ["amazon", "tiktok-shop", "shopify"];
@@ -95,6 +95,12 @@ export async function POST(req: Request) {
   if (!PLATFORMS.includes(input.platform)) {
     return NextResponse.json({ error: "Unsupported platform" }, { status: 400 });
   }
+  if (variantCount === 1 && !variantStyle) {
+    return NextResponse.json(
+      { error: "variantStyle is required when variants is 1" },
+      { status: 400 }
+    );
+  }
 
   const turnstile = await verifyTurnstileToken(turnstileToken, ip, "optimize");
   if (!turnstile.success) {
@@ -103,7 +109,7 @@ export async function POST(req: Request) {
       { status: 403 }
     );
   }
-  const cacheKey = buildListingCacheKey(input, variantCount, variantStyle);
+  const cacheKey = await buildListingCacheKey(input, variantCount, variantStyle);
   const cached = await getCachedListings(cacheKey);
 
   // 3) Build NDJSON stream that multiplexes N parallel variant generations.

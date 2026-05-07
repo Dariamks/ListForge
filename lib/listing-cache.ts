@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { Redis } from "@upstash/redis";
 import type {
   OptimizeInput,
@@ -20,11 +19,19 @@ export function isListingCacheConfigured(): boolean {
   return redis !== null;
 }
 
-export function buildListingCacheKey(
+async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0")
+  ).join("");
+}
+
+export async function buildListingCacheKey(
   input: OptimizeInput,
   variantCount: number,
   variantStyle?: VariantStyle
-): string {
+): Promise<string> {
   const stable = JSON.stringify({
     platform: input.platform,
     productName: input.productName.trim().toLowerCase(),
@@ -36,7 +43,7 @@ export function buildListingCacheKey(
     variantCount,
     variantStyle: variantStyle ?? "",
   });
-  return `listforge:listing-cache:${createHash("sha256").update(stable).digest("hex")}`;
+  return `listforge:listing-cache:${await sha256Hex(stable)}`;
 }
 
 export async function getCachedListings(
